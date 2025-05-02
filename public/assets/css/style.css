@@ -1,0 +1,126 @@
+:root {
+    --main-color: #3f2c1d;
+    --dark-beige: #523611;
+    --secondary-color: #F6E6D0;
+    --main-color-hover: #C96B2A;
+    --main-btn-color: #C96B2A;
+    --accent-color: #d68c45;
+    --main-font: 'Almarai', 'Tajawal', sans-serif;
+
+    --primary-bg: #f5e6d3;
+    --secondary-bg: #ffffff;
+    --text-color: #5d4037;
+    --light-text: #8d6e63;
+    --border-color: #d7ccc8;
+
+    --main-radius: 8px;
+}
+
+body {
+    font-family: var(--main-font);
+    background-color: var(--secondary-color);
+}
+
+input,
+select {
+    background-color: transparent !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px;
+    color: var(--light-text);
+}
+
+input:focus {
+    outline: none !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: none !important;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--secondary-color);
+}
+
+.navbar a {
+    color: var(--main-color);
+}
+
+.navbar .logo {
+    width: 231px;
+    height: 100px;
+}
+
+.navbar .nav-link,
+.sidebar .nav-link {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--main-color);
+    background-color: var(--secondary-color);
+    transition: color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: var(--main-radius);
+}
+
+.navbar .nav-link:hover,
+.sidebar .nav-link:hover {
+    color: var(--main-color-hover);
+}
+
+.navbar .nav-link.active,
+.sidebar .nav-link.active {
+    color: var(--secondary-color);
+    background-color: var(--main-color-hover);
+}
+
+.user-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+a.dropdown-toggle::after {
+    display: none !important;
+}
+
+.cart-count {
+    background-color: var(--main-btn-color);
+    color: white;
+    /* font-size: 12px;
+    padding: 7px 10px; */
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: var(--secondary-color);
+    color: var(--main-color);
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.footer a {
+    color: var(--main-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--main-color-hover);
+}
+
+/* Common Components */
+
+.btn-primary {
+    background-color: var(--main-btn-color);
+    border-color: var(--main-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: var(--main-radius);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--main-color-hover);
+}

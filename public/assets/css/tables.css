@@ -1,0 +1,32 @@
+.table {
+    --bs-table-bg: transparent;
+    overflow: hidden;
+    border: var(--border-color);
+    font-size: 15px;
+}
+
+.table-bordered>:not(caption)>*>* {
+    border-width: 0;
+}
+
+.table th,
+.table td {
+    /* background-color: #8B5A2B; */
+    color: var(--text-color);
+}
+
+.table img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.action-icon {
+    color: var(--primary-color);
+    --bs-btn-border-width: 0;
+}
+
+/* .action-icon:hover {
+    color: var(--text-color);
+} */

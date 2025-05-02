@@ -1,0 +1,36 @@
+.card {
+    background-color: var(--light-color);
+    border-radius: 10px;
+    border: 1px solid var(--secondary-color);
+    box-shadow: none !important;
+}
+
+.sidebar .nav-link {
+    text-align: center;
+    font-size: 18px;
+    width: 100%;
+    margin: auto;
+    margin-bottom: 40px;
+}
+
+/* style statistics page */
+.stat-card {
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s;
+    height: 100%;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.stat-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}

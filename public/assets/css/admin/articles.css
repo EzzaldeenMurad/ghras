@@ -1,0 +1,66 @@
+.title-modal {
+    color: var(--text-text) !important;
+
+}
+
+.modal-full {
+    width: 100%;
+    margin: 1.8rem 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.modal-content {
+    background-color: var(--secondary-color);
+    height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-body {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+}
+
+
+
+/* Customize Dropzone's appearance */
+.dropzone {
+    border: 2px dashed var(--border-color) !important;
+    border-radius: 8px;
+    min-height: 300px;
+    padding: 20px;
+    text-align: center;
+}
+
+.dz-message {
+    font-size: 1.2rem;
+    color: #888;
+}
+
+#articleForm .section-left {
+    margin-top: 28px;
+}
+
+label {
+    color: var(--light-text);
+}
+
+input,
+textarea {
+    background-color: transparent !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--light-text);
+}
+
+
+@media (max-width: 1370px) {
+    textarea {
+        height: 180px;
+    }
+}
