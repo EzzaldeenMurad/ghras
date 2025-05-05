@@ -124,3 +124,29 @@ a.dropdown-toggle::after {
     background-color: var(--accent-color);
     border-color: var(--main-color-hover);
 }
+
+
+
+.stars-inactive {
+    color: var(--dark-beige) !important;
+
+}
+
+.stars-active {
+    color: #FFCA00 !important;
+    position: relative;
+    z-index: 10;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.rating-star {
+    font-size: 24px;
+    color: var(--dark-beige);
+    cursor: pointer;
+}
+
+.rating-star.checked {
+    color: #FFCA00;
+}

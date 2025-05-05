@@ -70,4 +70,18 @@ class ProductController extends Controller
 
         return view('products.show', compact('product'));
     }
+
+    public function rate(Request $request)
+    {
+        $value = $request->input('value');
+        $product_id = $request->input('product_id');
+        $product = Product::find($product_id);
+
+        $rating = auth()->user()->ratings()->updateOrCreate(['product_id' => $product->id], ['value' => $value]);
+        return response()->json([
+            'success' => true,
+            'rating' => $rating->value,
+            'averageRating' => $product->rate()
+        ]);
+    }
 }

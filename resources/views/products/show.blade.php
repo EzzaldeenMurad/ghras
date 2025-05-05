@@ -8,7 +8,7 @@
             border-radius: 8px;
             height: 60px;
             width: 60px;
-            /* cursor: pointer; */
+            cursor: pointer;
         }
 
         .thumbnail-img img {
@@ -33,10 +33,6 @@
             color: #d47b22;
         }
 
-        /* .profileimage{
-                                                                                                height: 400px;
-                                                                                                 width: 400px;
-                                                                                            } */
         .profileimage {
             width: 120px;
             height: 120px;
@@ -45,6 +41,20 @@
 
         .name-farmer {
             font-size: 11px;
+        }
+
+
+
+        .star-container .stars-inactive {
+            position: absolute;
+            top: 0px;
+        }
+
+        .star-container {
+            background-color: var(--secondary-color);
+            color: var(--main-color);
+            border-radius: var(--main-radius);
+            width: 60%;
         }
     </style>
 @endsection
@@ -63,6 +73,7 @@
                 </div>
                 <p class="name-farmer">اسم المزارع</p>
                 <p class="fw-bold">{{ $product->user->name }}</p>
+
             </div>
 
             <!-- Left Main Content -->
@@ -81,7 +92,7 @@
                             @foreach ($product->images as $image)
                                 <div class="thumbnail-img">
                                     <img src="{{ asset($image->image_url) }}" class="border"
-                                        onclick="changeImage(this.src)">
+                                        onclick="changeMainImage(this)">
                                 </div>
                             @endforeach
                             {{-- <div class="thumbnail-img">
@@ -89,23 +100,51 @@
                                         class=" border" onclick="changeImage(this.src)">
                                 </div> --}}
                         </div>
+                        <div class="d-flex justify-content-center gap-2">
+                            <p>قيم هذا المنتج</p>
+
+                            <div class="rating" id="rating-{{ $product->id }}">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <span data-value="{{ $i }}"
+                                        onclick="rateProduct({{ $product->id }}, {{ $i }})"
+                                        class="rating-star ">★</span>
+                                @endfor
+                            </div>
+                        </div>
                     </div>
                     <!-- Product Details -->
                     <div class=" col-md-7 px-2">
                         <p><strong>الاسم:</strong> {{ $product->name }}</p>
                         <p> {!! $product->description !!}</p>
-                        <!-- Review -->
+
                         <div class="d-flex justify-content-center">
 
                             <div class="row justify-content-center align-items-center g-2">
                                 <div class="col-12"> <span>تقيم المنتج</span></div>
-                                <div class="col-12"> <span class="text-warning fs-5">★ ★</span></div>
+                                <div class="col-12">
+                                    <div class="star-container   position-relative">
+                                        <span class="stars-active" style="width:{{ $product->rate() * 20 }}%">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </span>
+
+                                        <span class="stars-inactive">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row justify-content-center align-items-center g-2">
                                 <div class="col-12"> <span>تم شراؤه </span></div>
                                 <div class="col-12"> <span>102 مرة</span></div>
                             </div>
-
 
                         </div>
                     </div>
@@ -115,4 +154,61 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+    <script>
+        function changeMainImage(imageElement) {
+            // Get the main image element
+            const mainImage = document.getElementById('mainImage');
+            // Set its src to the clicked sub-image's src
+            mainImage.src = imageElement.src;
+        }
+    </script>
+
+    <script>
+        function rateProduct(productId, ratingValue) {
+            fetch(`/rate-product`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        value: ratingValue
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateStars(productId, ratingValue);
+                        updateRatingDisplay(productId, data.averageRating);
+                    } else {
+                        alert(data.message || "حدث خطأ.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        function updateStars(productId, ratingValue) {
+            const container = document.getElementById(`rating-${productId}`);
+            const stars = container.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                const value = parseInt(star.getAttribute('data-value'));
+                if (value <= ratingValue) {
+                    star.classList.add('checked');
+                } else {
+                    star.classList.remove('checked');
+                }
+            });
+        }
+
+        function updateRatingDisplay(productId, averageRating) {
+            const container = document.querySelector('.star-container .stars-active');
+            // alert(newRating);
+            if (container) {
+
+                container.style.width = `${averageRating * 20}%`;
+            }
+        }
+    </script>
 @endsection

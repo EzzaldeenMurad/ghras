@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'region',
+        'specialization',
         'image',
     ];
 
@@ -64,7 +65,7 @@ class User extends Authenticatable
 
     public function ratings()
     {
-        return $this->hasMany(Rating::class);
+        return $this->hasMany(Rating::class, 'buyer_id');
     }
 
     public function rated(Product $product)
@@ -76,8 +77,16 @@ class User extends Authenticatable
     {
         return $this->rated($product) ? $this->ratings->where('product_id', $product->id)->first() : NULL;
     }
-    public function consultantImages()
+    public function certificates()
     {
-        return $this->hasMany(ConsultantImage::class, 'consultant_id');
+        return $this->hasMany(Certificate::class, 'consultant_id');
     }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+    // public function rated(Product $product)
+    // {
+    //     return $this->ratings->where('product_id', $product->id)->isNotEmpty();
+    // }
 }

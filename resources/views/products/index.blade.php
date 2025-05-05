@@ -4,7 +4,6 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/css/products.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         /* إخفاء شكل الـ scrollbar مع إبقاء التمرير */
         .category-swiper .swiper-scrollbar {
@@ -111,15 +110,15 @@
                                     <h5 class="product-title">{{ $product->name }}</h5>
                                     <p class="product-desc">{!! Str::limit($product->description, 50) !!}</p>
                                     <div class="d-flex justify-content-center align-items-center mb-2">
-                                        <div class="rating border-start border-black ps-2">
+                                        <div class="rating  border-black ps-2">{{-- border-start --}}
                                             <i class="fas fa-star"></i>
-                                            <span class="ms-1 rating-text">4.9/5</span>
+                                            <span class="ms-1 rating-text">{{ $product->rate() }}/5</span>
                                         </div>
                                         <!-- comments -->
-                                        <div class="comments pe-3">
+                                        {{-- <div class="comments pe-3">
                                             <span class="comment-icon"><i class="fas fa-comment"></i></span>
                                             <span class="comment-count">3</span>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <span>{{ $product->price }} ريال</span>
@@ -147,7 +146,7 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script>
         new Swiper('.category-swiper', {
             direction: 'vertical',

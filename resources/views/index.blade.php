@@ -4,6 +4,23 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}">
+    <style>
+        .stars-inactive {
+            color: var(--dark-beige) !important;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+        }
+
+        .stars-active {
+            color: #FFCA00;
+            position: relative;
+            z-index: 10;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -31,12 +48,22 @@
                             <div class="card-body position-absolute bottom-0 start-50 translate-middle py-1 px-2 w-100">
                                 <h5 class="card-title ">{{ $product->name }}</h5>
                             </div>
-                            <div class="star-container position-absolute  p-2">
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
-                                <i class="fa-solid fa-star"></i>
+                            <div class="star-container  position-absolute position-relative p-2">
+                                <span class="stars-active" style="width:{{ $product->rate() * 20 }}%">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </span>
+
+                                <span class="stars-inactive">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </span>
                             </div>
                         </div>
                     </a>

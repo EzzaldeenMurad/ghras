@@ -33,7 +33,7 @@
     left: 5px;
 }
 
-.product-section .star-container i {
+.product-section .star-container .stars-active i {
     color: var(--main-color-hover);
 }
 

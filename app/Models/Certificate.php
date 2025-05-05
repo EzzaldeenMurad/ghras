@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ConsultantImage extends Model
+class Certificate extends Model
 {
-    protected $fillable = ['image', 'consultant_id'];
+    protected $fillable = ['image_path', 'title', 'consultant_id'];
 
     public function consultant()
     {

@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('consultant_images', function (Blueprint $table) {
+        Schema::create('certificates', function (Blueprint $table) {
             $table->id();
             $table->foreignId('consultant_id')->constrained('users')->onDelete('cascade');
-            $table->string('image_url')->nullable();
+            $table->string('image_path')->nullable();
+            $table->string('title')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('consultant_images');
+        Schema::dropIfExists('certificates');
     }
 };

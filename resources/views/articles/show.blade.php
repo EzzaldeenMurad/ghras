@@ -4,6 +4,23 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/css/articles.css') }}">
+    <style>
+        .swiper-container {
+            max-height: 320px !important;
+            overflow: hidden;
+            max-width: 220px !important;
+        }
+        .star-container .stars-inactive {
+            position: absolute;
+            top: 0px;
+        }
+        .star-container {
+            /* background-color: var(--secondary-color);
+            color: var(--main-color);
+            border-radius: var(--main-radius); */
+            width: 60%;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -24,7 +41,6 @@
                                 <div class="col-md-6">
                                     <h4>قسم المنتجات </h4>
                                 </div>
-
                             </div>
                             <div class="row mb-4">
                                 <div class="col-md-6">
@@ -47,46 +63,130 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
             <h5 class="mb-3" style="border-right: 4px solid #8B5E3C; padding-right: 10px;">اراء العملاء </h5>
 
             <div class="row ">
 
                 <div class="col-5">
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center">
-                            <div
-                                style="width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; overflow: hidden; margin-left: 10px;">
-                                <img src="{{ asset('assets/images/consultant.png') }}" alt="صورة شخصية"
-                                    class="bi bi-person-fill d-flex justify-content-center align-items-center h-100"
-                                    style="font-size: 1.5rem;"></img>
+                    <!-- filepath: e:\myProjects\laravel\laravel_project\ghras\resources\views\articles\show.blade.php -->
+                    <div class="swiper-container" style=" overflow: hidden;">
+                        <div class="swiper-wrapper">
+                            @forelse ($article->reviews as $review)
+                                <div class="swiper-slide">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div
+                                                style="width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; overflow: hidden; margin-left: 10px;">
+                                                <img src="{{ asset($review->user->image) ?? asset('assets/images/consultant.png') }}"
+                                                    alt="صورة شخصية"
+                                                    class="bi bi-person-fill d-flex justify-content-center align-items-center h-100"
+                                                    style="font-size: 1.5rem;"></img>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ $review->user->name }}</h6>
+                                                <small class="text-muted">{{ $article->user->region }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{$review->rate }}
+                                    <div class="star-container   position-relative">
+                                        <span class="stars-active" style="width:{{ $review->rate * 20 }}%">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </span>
+
+                                        <span class="stars-inactive">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </span>
+                                    </div>
+                                    {{-- <div class="mb-3">
+                                        <p>{{ $review->review }}</p>
+                                        <div class="rating" id="rating-">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span data-value="{{ $i }}" class="rating-star ">★</span>
+                                            @endfor
+                                        </div>
+                                    </div> --}}
+                                </div>
+                            @empty
+                                <div class="swiper-slide">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning text-center">
+                                            لا توجد تعليقات لعرضها.
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
+                        <!-- Add scrollbar -->
+                        <div class="swiper-scrollbar"></div>
+                    </div>
+                    {{-- <div>
+
+                        @forelse ($article->reviews as $review)
+                            <div class="">
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div
+                                            style="width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; overflow: hidden; margin-left: 10px;">
+                                            <img src="{{ asset($review->user->image) ?? asset('assets/images/consultant.png') }}"
+                                                alt="صورة شخصية"
+                                                class="bi bi-person-fill d-flex justify-content-center align-items-center h-100"
+                                                style="font-size: 1.5rem;"></img>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ $review->user->name }}</h6>
+                                            <small class="text-muted">{{ $article->user->region }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <p>{{ $review->review }}</p>
+                                    <div class="rating" id="rating-">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <span data-value="{{ $i }}" class="rating-star ">★</span>
+                                        @endfor
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-12">
+                                <div class="alert alert-warning text-center">
+                                    لا توجد تعليقات لعرضها.
+                                </div>
+                            </div>
+                        @endforelse
+                    </div> --}}
+                    <div class="mt-4" id="review-div">
+                        <form action="{{ route('articles.review.store') }}" method="post"
+                            class="input-group comment-form ">
+                            @csrf
+                            <div class="input-group d-flex gap-3">
+                                <input type="text" class="form-control" placeholder="اضافة تعليق جديد" name="review"
+                                    required>
+                                <button type="submit" class="btn btn-primary">إرسال</button>
                             </div>
                             <div>
-                                <h6 class="mb-0">محمد يوسف</h6>
-                                <small class="text-muted">الخرمة</small>
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <span data-value="{{ $i }}" class="rating-star"
+                                        onclick="rateProduct({{ $i }})" id="star-{{ $i }}">★</span>
+                                @endfor
+                                <input type="hidden" name="rating" class="rating-input" id="ratingInput">
+                                <input type="hidden" name="article_id" value="{{ $article->id }}">
                             </div>
-                        </div>
-                    </div>
+                            @error('rating')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
 
-                    <div class="mb-3">
-                        <p>أفضل منتج في السوق العربي</p>
-                        <div>
-                            <span class="circle-rating active"></span>
-                            <span class="circle-rating active"></span>
-                            <span class="circle-rating active"></span>
-                            <span class="circle-rating active"></span>
-                            <span class="circle-rating"></span>
-                        </div>
-                    </div>
 
-                    <div class="mt-4">
-                        <form action="#" method="post" class="input-group comment-form">
-                            <input type="text" class="form-control" placeholder="اضافة تعليق جديد">
-                            <button class="btn btn-primary">إرسال</button>
                         </form>
                     </div>
                 </div>
@@ -94,5 +194,84 @@
             </div>
         </div>
     </div>
+    @include('alerts.alert')
+@endsection
+
+@section('scripts')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script>
+        function rateProduct(value) {
+            // تخزين القيمة في الحقل المخفي
+            document.getElementById('ratingInput').value = value;
+
+            // تحديث لون النجوم
+            for (let i = 1; i <= 5; i++) {
+                const star = document.getElementById('star-' + i);
+                if (i <= value) {
+                    star.classList.add('checked');
+                } else {
+                    star.classList.remove('checked');
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        const swiper = new Swiper('.swiper-container', {
+            direction: 'vertical',
+            slidesPerView: 'auto',
+            freeMode: true,
+            scrollbar: {
+                el: '.swiper-scrollbar',
+                draggable: true,
+            },
+            mousewheel: true,
+        });
+    </script>
+    {{-- <script>
+        const value = parseInt(star.getAttribute('data-value'));
+        const ratingInput = document.getElementById('ratingInput');
+        if (value) {
+            ratingInput.value = value;
+        }
+    </script> --}}
+    {{-- <script>
+        function rateArticle(articleId, ratingValue) {
+            fetch(`/rate-article`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        article_id: articleId,
+                        value: ratingValue
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateStars(articleId, ratingValue);
+                    } else {
+                        alert(data.message || "حدث خطأ.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function updateStars(articleId, ratingValue) {
+            const container = document.getElementById(`rating-${articleId}`);
+            const stars = container.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                const value = parseInt(star.getAttribute('data-value'));
+                if (value <= ratingValue) {
+                    star.classList.add('checked');
+                } else {
+                    star.classList.remove('checked');
+                }
+            });
+        }
+    </script> --}}
 
 @endsection

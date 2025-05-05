@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\consultantController;
 use App\Http\Controllers\Dashboard\Seller\ProductController as SellerProductController;
 use App\Http\Controllers\HomeController;
@@ -20,6 +21,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // ==========================
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::post('/rate-product', [ProductController::class, 'rate'])->name('products.rate');
 
 
 
@@ -28,11 +30,15 @@ Route::group(['prefix' => 'consultants'], function () {
     Route::get('/', [consultantController::class, 'index'])->name('consultants');
     Route::get('/{id}', [consultantController::class, 'show'])->name('consultants.show');
 });
+Route::delete('/certificates/{certificate}/', [CertificateController::class, 'destroy'])->name('certificates.destroy');
+Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
 
 
 // ===========================
 Route::get('/articles', [ArticlesController::class, 'index'])->name('articles');
 Route::get('/articles/{id}', [ArticlesController::class, 'show'])->name('articles.show');
+Route::post('review', [ArticlesController::class, 'storeReview'])->name('articles.review.store');
+
 
 // ===========================
 Route::get('/contact', function () {

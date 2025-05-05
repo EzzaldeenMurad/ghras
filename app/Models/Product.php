@@ -45,4 +45,17 @@ class Product extends Model
     // {
     //     return $this->images()->where('is_primary', true)->first();
     // }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+    // public function rated(User $user)
+    // {
+    //     return $this->ratings->where('user_id', $user->id)->isNotEmpty();
+    // }
+
+    public function rate()
+    {
+        return $this->ratings->isNotEmpty() ? $this->ratings()->sum('value') / $this->ratings()->count() : 0;
+    }
 }

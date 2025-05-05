@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\ConsultantImage;
+use App\Models\Certificate;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -37,6 +37,7 @@ class UserSeeder extends Seeder
             'email' => 'amjad@gmail.com',
             'password' => '12345678',
             'role' => 'consultant',
+            'specialization'=>'علوم تربة',
             'image' => 'images/users/consultants1.png',
         ]);
         User::create([
@@ -44,6 +45,7 @@ class UserSeeder extends Seeder
             'email' => 'abdallah@gmail.com',
             'password' => '12345678',
             'role' => 'consultant',
+            'specialization'=>'علوم تربة',
             'image' => 'images/users/consultant2.png',
         ]);
         User::create([
@@ -51,19 +53,23 @@ class UserSeeder extends Seeder
             'email' => 'ali@gmail.com',
             'password' => '12345678',
             'role' => 'consultant',
+            'specialization'=>'علوم طبيعة',
             'image' => 'images/users/consultant3.png',
         ]);
-        ConsultantImage::create([
-            'image_url' => 'images/users/consultants/Rectangle 11.png',
-            'consultant_id' => 4
+        Certificate::create([
+             'image_path' => 'images/users/consultants/Rectangle 11.png',
+            'consultant_id' => 4,
+            'title' => 'علوم طبيعة',
         ]);
-        ConsultantImage::create([
-            'image_url' => 'images/users/consultants/Rectangle 11.png',
-            'consultant_id' => 5
+        Certificate::create([
+             'image_path' => 'images/users/consultants/Rectangle 11.png',
+            'consultant_id' => 5,
+            'title' => 'علوم تربة',
         ]);
-        ConsultantImage::create([
-            'image_url' => 'images/users/consultants/Rectangle 11.png',
-            'consultant_id' => 6
+        Certificate::create([
+             'image_path' => 'images/users/consultants/Rectangle 11.png',
+            'consultant_id' => 6,
+            'title' => 'علوم تربة',
         ]);
     }
 }

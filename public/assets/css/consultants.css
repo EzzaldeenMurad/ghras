@@ -61,7 +61,7 @@
 }
 
 .certificate-card {
-    background-color: #e9c396;
+    /* background-color: #e9c396; */
     border-radius: 12px;
     height: 280px;
     margin-bottom: 1.5rem;
@@ -70,5 +70,52 @@
 
 .certificate-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); */
+}
+
+.certificate-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 280px;
+    width: 240px;
+    padding: 0;
+    margin: 10px;
+    transition: transform 0.3s;
+}
+
+.certificate-item:hover {
+    transform: translateY(-5px);
+}
+
+.certificate-img {
+    width: 100%;
+    height: 100%;
+
+    /* object-fit: cover; */
+}
+
+.certificate-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px;
+    font-size: 0.9rem;
+    opacity: 0;
+    width: 100%;
+    transition: opacity 0.3s;
+}
+
+.certificate-item:hover .certificate-overlay {
+    opacity: 1;
+}
+
+.certificates-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReviewFormRequest;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use Illuminate\Support\Facades\Storage;
@@ -27,12 +28,29 @@ class ArticlesController extends Controller
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function show(Article $id)
+    public function show(int $id)
     {
         // dd($id);
-        $article = Article::with('user')->find($id)->first();
-        // $article = Article::find($id)->first();
-
+        // $article = Article::with('user')->find($id);
+        $article = Article::with(['user', 'reviews'])->findOrFail($id);
+        // return view('articles.show', compact('article'));
         return view('articles.show', compact('article'));
+    }
+    public function storeReview(ReviewFormRequest $request)
+    {
+        $id = $request->input('article_id');
+        $review = $request->input('review');
+        $rating = $request->input('rating');
+        $buyer = auth()->user();
+        $article = Article::with('user')->find($id);
+        // $article = Article::find($id);
+        // dd( $id );
+        $article->reviews()->create([
+            'review' => $review,
+            'rate' => $rating,
+            'buyer_id' => $buyer->id
+        ]);
+        return redirect()->route('articles.show', $article->id)
+            ->with('success', 'تم التقييم بنجاح');
     }
 }
