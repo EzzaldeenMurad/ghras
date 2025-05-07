@@ -21,6 +21,7 @@ class ProfileController extends Controller
             'name' => 'required|string|max:255',
             'region' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'consultation_price' => 'nullable|numeric'
         ]);
         // dd($validated);
         // Update user data
@@ -46,7 +47,14 @@ class ProfileController extends Controller
             $image->move(public_path('images/users'), $imageName);
             $user->image = $imagePath;
         }
-        if ($user->role === 'consultant') {
+
+        // Update consultation
+
+        if (isset($validated['consultation_price'])) {
+            $user->consultation()->updateOrCreate(
+                ['consultant_id' => $user->id],
+                ['price' => $validated['consultation_price']]
+            );
         }
 
         $user->save();

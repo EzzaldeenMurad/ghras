@@ -33,6 +33,50 @@
                 </ul>
             </div>
             @if (!Auth::check())
+                <a href="{{ route('login') }}"
+                    class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle">
+                    <span class="ms-2">تسجيل دخول</span>
+                    <i class="fa fa-arrow-alt-circle-left"></i>
+                </a>
+            @else
+                @if (auth()->user()->role === 'buyer')
+                    <div class="cart position-relative ms-3">
+                        <a href="{{ route('cart') }}"
+                            class="d-flex align-items-center text-decoration-none text-dark me-2">
+                            <i class="fa fa-shopping-cart fa-lg position-relative "></i>
+                            <span
+                                class="cart-count position-absolute top-0.5 start-100 translate-middle badge rounded-pill ">
+                                0
+                            </span>
+                        </a>
+                    </div>
+                @endif
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
+                        id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="ms-2">{{ Auth::user()->name }}</span>
+                        <div class="user-img">
+                            <img src="{{ Auth::user()->image ? asset(Auth::user()->image) : asset('assets/images/avatar_user.jpg') }}"
+                                alt="User" class="rounded-circle w-100 h-100">
+                        </div>
+                    </a>
+                    <ul class="dropdown-menu text-end" aria-labelledby="loginDropdown">
+                        <li> <a class="dropdown-item"
+                                href="{{ Auth::user()->role === 'admin' ? route(Auth::user()->role . '.dashboard') : route('profile') }}">
+                                لوحة التحكم
+                            </a>
+                        </li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item">تسجيل الخروج</button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div>
+            @endif
+            {{-- @if (!Auth::check())
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none text-dark dropdown-toggle"
                         id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -83,7 +127,7 @@
                     </ul>
 
                 </div>
-            @endif
+            @endif --}}
 
         </div>
     </nav>

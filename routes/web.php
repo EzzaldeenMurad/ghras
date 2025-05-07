@@ -8,8 +8,11 @@ use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\consultantController;
+use App\Http\Controllers\Dashboard\consultant\ConsultantOrderController;
+use App\Http\Controllers\Dashboard\Seller\consultationController;
 use App\Http\Controllers\Dashboard\Seller\ProductController as SellerProductController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\paymentController;
 use App\Http\Controllers\ProductController;
 
 use App\Http\Controllers\ProfileController;
@@ -29,6 +32,8 @@ Route::post('/rate-product', [ProductController::class, 'rate'])->name('products
 Route::group(['prefix' => 'consultants'], function () {
     Route::get('/', [consultantController::class, 'index'])->name('consultants');
     Route::get('/{id}', [consultantController::class, 'show'])->name('consultants.show');
+    Route::get('/consultation-order/{id}', [consultantController::class, 'consultationOrder'])->name('consultants.consultation-order');
+    Route::post('/consultation-store', [consultantController::class, 'consultationStore'])->name('consultants.consultation.store')->middleware('auth');
 });
 Route::delete('/certificates/{certificate}/', [CertificateController::class, 'destroy'])->name('certificates.destroy');
 Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
@@ -44,7 +49,7 @@ Route::post('review', [ArticlesController::class, 'storeReview'])->name('article
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
-Route::middleware('auth')->group(function () {
+Route::prefix('/dashboard')->middleware('auth')->group(function () {
     Route::prefix('/admin')->group(function () {
         Route::get('/', [StatisticsController::class, 'index'])->name('admin.dashboard');
 
@@ -83,12 +88,11 @@ Route::middleware('auth')->group(function () {
 
     // Seller and Buyer Routes
     Route::prefix('/seller')->group(function () {
-        Route::get('/', function () {
-            return view('dashboard.seller.consultations');
-        })->name('seller.consultations');
         Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products.index');
         Route::get('/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
         Route::post('/products/store', [SellerProductController::class, 'store'])->name('seller.products.store');
+        Route::get('/consultations', [consultationController::class, 'index'])->name('seller.consultations');
+        Route::get('/consultations/cancelled/{id}', [consultationController::class, 'cancelledOrder'])->name('seller.orders.cancelled');
 
         Route::get('/orders', function () {
             return view('dashboard.seller.orders');
@@ -102,10 +106,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Consultant Routes
-    Route::prefix('/conslut')->group(function () {
-        Route::get('/order-conslut', function () {
-            return view('dashboard.conslut.order-conslut');
-        })->name('conslut.order-conslut');
+    Route::prefix('/consultants')->group(function () {
+        Route::get('/consultation-order', [ConsultantOrderController::class, 'index'])->name('dashboard.consultants.consultation-order');
+        Route::post('/consultation-order/update', [ConsultantOrderController::class, 'updateOrder'])->name('dashboard.consultants.orders.update');
     });
 
     Route::get('/profile', [ProfileController::class, 'showProfile'])->name('profile');
@@ -120,6 +123,9 @@ Route::get('/cart', function () {
 Route::get('/login', function () {
     return view('auth.login');
 });
+
+Route::get('/payment/{id}', [paymentController::class, 'index'])->name('payment.index');
+Route::post('/stripe/payment', [paymentController::class, 'handlePayment'])->name('stripe.payment');
 
 
 // Authentication Routes

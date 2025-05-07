@@ -22,7 +22,8 @@
                         <div class="col-md-5 text-center w-100">
                             <h1 class="consultant-name">المستشار<br>{{ $consultant->name ?? 'غير معروف' }}</h1>
                             <p class="consultant-specialty">{{ $consultant->specialization ?? 'علوم الحيوانات' }} </p>
-                            <button class="btn btn-primary">طلب استشارة</button>
+                            <a href="{{ route('consultants.consultation-order', $consultant->id) }}"
+                                class="btn btn-primary">طلب استشارة</a>
                         </div>
 
                     </div>

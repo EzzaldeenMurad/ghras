@@ -21,7 +21,7 @@
     } elseif ($role === 'consultant') {
         $menuItems = [
             ['title' => 'الملف الشخصي', 'route' => 'profile'],
-            ['title' => 'طلبات الإستشارة', 'route' => 'conslut.order-conslut'],
+            ['title' => 'طلبات الإستشارة', 'route' => 'dashboard.consultants.consultation-order'],
         ];
         $sidebarTitle = 'ملف حساب المستشار';
     } else {

@@ -163,7 +163,7 @@
         }
 
         .modal-content {
-            background-color:var(--secondary-color);
+            background-color: var(--secondary-color);
         }
     </style>
 @endsection
@@ -186,22 +186,30 @@
                 </div>
 
                 <div class="row mb-4">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md mb-3">
                         <label for="username" class="form-label">اسم المستخدم</label>
                         <input type="text" class="form-control" id="username" name="name"
                             value="{{ $user->name ?? '' }}">
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md mb-3">
                         <label for="accountType" class="form-label">نوع الحساب</label>
                         <input type="text" class="form-control" id="accountType" readonly name="account_type"
                             value="{{ $user->role == 'buyer' ? 'زبون' : ($user->role == 'seller' ? 'تاجر' : ($user->role == 'consultant' ? 'مستشار' : '')) }}">
 
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md mb-3">
                         <label for="region" class="form-label">المنطقة</label>
                         <input type="text" class="form-control" id="region" name="region"
                             value="{{ $user->region ?? '' }}">
                     </div>
+                    @if ($user->role == 'consultant')
+                        <div class="col-md mb-3">
+                            <label for="consultation_price" class="form-label">سعر الاستشاره</label>
+                            <input type="text" class="form-control" id="consultation_price" name="consultation_price"
+                                value="{{ $user->consultation->price ?? '' }}">
+                        </div>
+                    @endif
+
                 </div>
 
                 <div class="text-center">

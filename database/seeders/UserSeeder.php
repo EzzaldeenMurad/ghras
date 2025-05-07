@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Certificate;
+use App\Models\Consultation;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -37,7 +38,7 @@ class UserSeeder extends Seeder
             'email' => 'amjad@gmail.com',
             'password' => '12345678',
             'role' => 'consultant',
-            'specialization'=>'علوم تربة',
+            'specialization' => 'علوم تربة',
             'image' => 'images/users/consultants1.png',
         ]);
         User::create([
@@ -45,7 +46,7 @@ class UserSeeder extends Seeder
             'email' => 'abdallah@gmail.com',
             'password' => '12345678',
             'role' => 'consultant',
-            'specialization'=>'علوم تربة',
+            'specialization' => 'علوم تربة',
             'image' => 'images/users/consultant2.png',
         ]);
         User::create([
@@ -53,21 +54,33 @@ class UserSeeder extends Seeder
             'email' => 'ali@gmail.com',
             'password' => '12345678',
             'role' => 'consultant',
-            'specialization'=>'علوم طبيعة',
+            'specialization' => 'علوم طبيعة',
             'image' => 'images/users/consultant3.png',
         ]);
+        Consultation::create([
+            'consultant_id' => 4,
+            'price' => 100,
+        ]);
+        Consultation::create([
+            'consultant_id' => 5,
+            'price' => 50,
+        ]);
+        Consultation::create([
+            'consultant_id' => 6,
+            'price' => 80,
+        ]);
         Certificate::create([
-             'image_path' => 'images/users/consultants/Rectangle 11.png',
+            'image_path' => 'images/users/consultants/Rectangle 11.png',
             'consultant_id' => 4,
             'title' => 'علوم طبيعة',
         ]);
         Certificate::create([
-             'image_path' => 'images/users/consultants/Rectangle 11.png',
+            'image_path' => 'images/users/consultants/Rectangle 11.png',
             'consultant_id' => 5,
             'title' => 'علوم تربة',
         ]);
         Certificate::create([
-             'image_path' => 'images/users/consultants/Rectangle 11.png',
+            'image_path' => 'images/users/consultants/Rectangle 11.png',
             'consultant_id' => 6,
             'title' => 'علوم تربة',
         ]);
