@@ -324,7 +324,7 @@
                             },
                             body: JSON.stringify({
                                 payment_method_id: paymentMethod.id,
-                                amount: 5000 // مثال: 50 ريال (5000 هللة)
+                                amount: {{ $totalPrice }} // مثال: 50 ريال (5000 هللة)
                             })
                         })
                         .then(res => res.json())
