@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('seller_id')->constrained('users')->cascadeOnDelete();
             $table->text('subject');
             $table->text('description')->nullable();
-            $table->enum('status', ['pending', 'accepted', 'cancelled'])->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

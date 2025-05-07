@@ -1,7 +1,7 @@
 <div class="modal modal-md alert-modal fade" tabindex="-1" id="alertModal">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-body text-center">
+            <div class="modal-body text-center ">
                 @if (session('success'))
                     <div id="alertMessage">
                         {{ session('success') }}

@@ -152,7 +152,7 @@ a.dropdown-toggle::after {
 }
 
 .alert-modal .modal-dialog {
-    margin: 10rem auto;
+    margin: 8rem auto;
     min-height: 50%;
 }
 

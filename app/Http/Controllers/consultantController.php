@@ -47,6 +47,6 @@ class consultantController extends Controller
             'seller_id' => auth()->user()->id,
             'status' => 'pending'
         ]);
-        return redirect()->route('consultants.show', $consultation->consultant->id);
+        return redirect()->route('consultants.show', $consultation->consultant->id)->with('success', 'تم ارسال الطلب بنجاح');
     }
 }

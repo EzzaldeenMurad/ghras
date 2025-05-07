@@ -168,7 +168,9 @@ class paymentController extends Controller
     private function savePaymentConsultantOrder($paymentIntent, $orderId)
     {
         try {
-            
+
+            $order = ConsultantOrder::find($orderId);
+
             $payment =    Payment::create([
                 'amount' => $paymentIntent->amount,
                 'status' => $paymentIntent->status,
@@ -178,6 +180,10 @@ class paymentController extends Controller
                 'consultant_order_id' => $orderId,
             ]);
 
+            $dd =  $order->update([
+                'status' => 'paid'
+            ]);
+            // dd($dd);
             return $payment;
         } catch (\Exception $e) {
             // Log the error but don't interrupt the user flow
