@@ -150,3 +150,13 @@ a.dropdown-toggle::after {
 .rating-star.checked {
     color: #FFCA00;
 }
+
+.alert-modal .modal-dialog {
+    margin: 10rem auto;
+    min-height: 50%;
+}
+
+.modal-content {
+    margin: auto;
+    min-height: 150px;
+}

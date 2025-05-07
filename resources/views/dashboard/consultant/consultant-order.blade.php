@@ -46,18 +46,23 @@
                                             <span class="pending">{{ $order->getStatusNameAttribute() }}</span>
                                         </td>
                                         <td>
-                                            <form action="{{ route('dashboard.consultants.orders.update') }}" method="POST">
-                                                @csrf
-                                                <div class="d-flex gap-2 justify-content-end">
-                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                                    <button class="btn p-0 btn-sm action-icon" title="قبول" name="status"
-                                                        value="accepted"><i
-                                                            class="fa-regular  fa-circle-check text-success"></i></button>
-                                                    <button type="submit" class="btn p-0 btn-sm action-icon" title="الغاء"
-                                                        name="status" value="cancelled"><i
-                                                            class="fa-regular fa-circle-xmark text-danger"></i> </button>
-                                                </div>
-                                            </form>
+                                            @if ($order->status == 'pending')
+                                                <form action="{{ route('dashboard.consultants.orders.update') }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <div class="d-flex gap-2 justify-content-end">
+                                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                        <button class="btn p-0 btn-sm action-icon" title="قبول"
+                                                            name="status" value="accepted"><i
+                                                                class="fa-regular  fa-circle-check text-success"></i></button>
+                                                        <button type="submit" class="btn p-0 btn-sm action-icon"
+                                                            title="الغاء" name="status" value="cancelled"><i
+                                                                class="fa-regular fa-circle-xmark text-danger"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            @endif
+
                                         </td>
                                     </tr>
 

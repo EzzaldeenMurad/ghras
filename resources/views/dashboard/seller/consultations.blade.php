@@ -132,7 +132,7 @@
                         </div>
                     @endif
 
-                    @if (isset($consultations) && $consultations->count() > 0)
+                    {{-- @if (isset($consultations) && $consultations->count() > 0) --}}
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
@@ -147,12 +147,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($consultations as $consultation)
+                                    @forelse ($consultations as $consultation)
                                         <tr>
                                             <td>
                                                 <div class="consultant-profile">
                                                     {{-- <img src="{{ $consultation->consultant->image ? asset($consultation->consultant->image) : asset('assets/images/avatar_user.jpg') }}"
-                                                         alt="{{ $consultation->consultant->name }}" class="consultant-avatar"> --}}
+                                                     alt="{{ $consultation->consultant->name }}" class="consultant-avatar"> --}}
                                                     <span
                                                         class="consultant-name">{{ $consultation->consultation->consultant->name }}</span>
                                                 </div>
@@ -182,7 +182,7 @@
                                                                 value="cancelled"><i
                                                                     class="fa-regular fa-circle-xmark text-danger"></i>
                                                             </a>
-                                                            <a href="{{ route('payment.index', $consultation->id) }}"
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#alertModal" 
                                                                 class="btn p-0 btn-sm action-icon" title="pay"><i
                                                                     class="fa-brands fa-paypal"></i></a>
                                                         @elseif($consultation->status == 'accepted')
@@ -190,28 +190,24 @@
                                                                 title="محادثة مع المستشار">
                                                                 <i class="fas fa-comments chat-icon"></i>
                                                             </a>
-                                                        @else
                                                         @endif
                                                     </div>
                                                 </div>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center">لا يوجد استشارات</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
-
-                        {{-- <div class="d-flex justify-content-center mt-4">
-                            {{ $consultations->links() }}
-                        </div> --}}
-                    @else
-                        <div class="empty-state">
-                            <i class="fas fa-comments"></i>
-                            <h5>لا توجد استشارات</h5>
-
-                        </div>
-                    @endif
+                    {{-- @else
+                        <p class="text-center">لا يوجد استشارات</p>
+                    @endif --}}
                 </div>
+                <x-modal-alert></x-modal-alert>
             </div>
         </div>
     </div>
