@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\ConsultantOrder;
+use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,9 @@ class paymentController extends Controller
         $order = ConsultantOrder::with('consultation')->findOrFail($id);
         $vat = 0;
         $totalPrice = $vat + $order->consultation->price;
-        return view('payment.index', compact('order', 'totalPrice', 'vat'));
+        $orderId = $order->id;
+        $price = $order->id;
+        return view('payment.index', compact('orderId', 'price', 'totalPrice', 'vat'));
     }
 
     // public function handlePayment(Request $request)
@@ -58,10 +61,10 @@ class paymentController extends Controller
         $request->validate([
             'payment_method_id' => 'required|string',
             'amount' => 'required|numeric|min:1',
-            // 'invoice_id' => 'required|exists:invoices,id'
+            'order_id' => 'nullable',
         ]);
 
-        // dd($request->all());
+        dd($request->all());
         // Set your Stripe API key
         Stripe::setApiKey(env('STRIPE_SECRET'));
         try {
@@ -75,7 +78,7 @@ class paymentController extends Controller
                 'return_url' => route('home'),
                 'metadata' => [
                     'user_id' => auth()->id(),
-                    // 'invoice_id' => $request->invoice_id ?? null,
+                    'order_id' => $request->order_id ?? null,
                 ]
             ]);
 
@@ -92,14 +95,14 @@ class paymentController extends Controller
                 ]);
             } else if ($paymentIntent->status === 'succeeded') {
                 // Payment succeeded, save to database
-                // $save = $this->savePaymentRecord($paymentIntent,  $request->invoice_id);
+                $save = $this->savePaymentRecord($paymentIntent,  $request->order_id);
 
                 session()->flash('success', 'تم عملية الدفع بنجاح');
 
                 return response()->json([
                     'success' => true,
                     'payment_id' => $paymentIntent->id,
-                    // 'invoice_id' => $save
+                    // 'order_id' => $save
                 ]);
             } else {
                 // Invalid status
@@ -135,17 +138,17 @@ class paymentController extends Controller
             $paymentIntent->confirm();
 
             if ($paymentIntent->status === 'succeeded') {
-                // Get the invoice_id from metadata
-                $invoiceId = $paymentIntent->metadata->invoice_id ?? null;
+                // Get the order_id from metadata
+                $orderId = $paymentIntent->metadata->order_id ?? null;
 
                 // Save payment to database
                 dd($paymentIntent);
-                // $save = $this->savePaymentRecord($paymentIntent, $invoiceId);
+                $save = $this->savePaymentRecord($paymentIntent, $orderId);
 
                 return response()->json([
                     'success' => true,
                     'payment_id' => $paymentIntent->id,
-                    // 'invoice_id' => $save
+                    // 'order_id' => $save
                 ]);
             } else {
                 return response()->json([
@@ -160,6 +163,42 @@ class paymentController extends Controller
                 'success' => false,
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+    private function savePaymentRecord($paymentIntent, $orderId)
+    {
+        try {
+            $payment =    Payment::create([
+                'amount' => 100, // Convert from cents back to decimal
+                'status' => $paymentIntent->status,
+                'payment_id' => $paymentIntent->id,
+                'payment_method' => 'card', // e.g., 'card'
+                'user_id' => auth()->id(),
+                'order_id' => $orderId,
+                'date_payment' => now(),
+            ]);
+
+            // If there's an invoice, update its status
+            // if ($orderId) {
+            //     $invoice = Invoice::find($orderId);
+            //     // dd($invoice);
+            //     if ($invoice) {
+            //         $invoice->status = 'paid';
+            //         $invoice->save();
+            //         if ($invoice->reservationRequest) {
+            //             $invoice->reservationRequest->update(['status' => 'completed']);
+            //         }
+            //         if ($invoice->installment) {
+            //             $invoice->installment->update(['status' => 'paid']);
+            //         }
+            //         // $invoice->financeRequest->update(['status' => 'paid']);
+            //     }
+            // }
+
+            return $payment;
+        } catch (\Exception $e) {
+            // Log the error but don't interrupt the user flow
+            Log::error('Error saving payment record: ' . $e->getMessage());
         }
     }
 }

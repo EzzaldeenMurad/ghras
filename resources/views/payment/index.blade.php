@@ -12,20 +12,12 @@
             --text-color: #333333;
             --border-color: #E0D0B8;
         }
+        }
 
-        /* body {
-                                                                                                                                                            background-color: var(--primary-bg);
-                                                                                                                                                            min-height: 100vh;
-                                                                                                                                                            display: flex;
-                                                                                                                                                            flex-direction: column;
-                                                                                                                                                        } */
-
-        .payment-container {
+        */ .payment-container {
             margin-top: 3rem;
             margin-bottom: 3rem;
         }
-
-
 
         .payment-title {
             font-weight: 700;
@@ -124,6 +116,7 @@
 
         @media (max-width: 767.98px) {
             .payment-card {
+
                 padding: 1.5rem;
             }
 
@@ -138,7 +131,7 @@
     <div class="container payment-container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="payment-card">
+                <div class="payment-card mt-4">
                     <h2 class="payment-title">بيانات الدفع</h2>
 
                     <div class="row">
@@ -146,6 +139,7 @@
                         <div class="col-md-7 mb-4 mb-md-0">
                             <form id="payment-form">
                                 @csrf
+                                <input type="hidden" id="order-id" value="{{ $orderId ?? '' }}">
 
                                 <div class="mb-3">
                                     <label for="cardholder-name" class="form-label">الاسم</label>
@@ -166,7 +160,7 @@
                                         <div id="card-expiry-error" class="text-danger mt-1"></div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">CVV</label>
+                                        <label class="form-label">CVC</label>
                                         <div id="card-cvc-element" class="StripeElement form-control"></div>
                                         <div id="card-cvc-error" class="text-danger mt-1"></div>
                                     </div>
@@ -187,7 +181,7 @@
 
                                 <div class="summary-item">
                                     <span>سعر الاستشارة:</span>
-                                    <span>{{ $order->consultation->price }}</span>
+                                    <span>{{ $price }}</span>
                                 </div>
 
                                 <div class="summary-item">
@@ -197,7 +191,7 @@
 
                                 <div class="summary-item summary-total">
                                     <span>الإجمالي:</span>
-                                    <span>{{ $totalPrice }}</span>
+                                    <span id="total-price">{{ $totalPrice }}</span>
                                 </div>
                             </div>
                         </div>
@@ -233,8 +227,8 @@
 
 
             const cardNumber = elements.create('cardNumber', {
-                style,
-                iconStyle: 'solid'
+                style: style,
+                disableLink: true
             });
             const cardExpiry = elements.create('cardExpiry', {
                 style
@@ -265,6 +259,7 @@
                 if (event.error) {
                     if (field === 'cardNumber') {
                         errorContainers.cardNumber.textContent = errorMessages.card_number || event.error.message;
+
                     } else if (field === 'cardExpiry') {
                         errorContainers.cardExpiry.textContent = errorMessages.card_expiry || event.error.message;
                     } else if (field === 'cardCvc') {
@@ -275,13 +270,11 @@
                 }
             }
 
-
-            // ربط الأحداث بكل حقل
             cardNumber.on('change', event => handleStripeError(event, 'cardNumber'));
             cardExpiry.on('change', event => handleStripeError(event, 'cardExpiry'));
             cardCvc.on('change', event => {
                 handleStripeError(event, 'cardCvc');
-                // في حالة وجود خطأ في CVV
+
                 if (event.error) {
                     if (event.error.code === 'invalid_cvc') {
                         errorContainers.cardCvc.textContent = 'يرجى إدخال رمز CVV صالح.';
@@ -300,43 +293,168 @@
                 event.preventDefault();
 
                 const cardholderName = document.getElementById('cardholder-name').value;
+                const orderId = document.getElementById('order-id').value;
 
-                const {
-                    paymentMethod,
-                    error
-                } = await stripe.createPaymentMethod({
+                // Create a PaymentMethod
+                stripe.createPaymentMethod({
                     type: 'card',
                     card: cardNumber,
                     billing_details: {
                         name: cardholderName,
                     },
+                }).then(function(result) {
+                    if (result.error) {
+                        // Show error to your customer
+                        const errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                        // Re-enable the submit button
+                        submitButton.disabled = false;
+                        buttonText.classList.remove('d-none');
+                        spinner.classList.add('d-none');
+                    } else {
+                        // Send the PaymentMethod ID to your server
+                        processPayment(result.paymentMethod.id, orderId);
+                    }
                 });
-
-                if (error) {
-                    document.getElementById('card-errors').textContent = error.message;
-                } else {
-                    // إرسال إلى السيرفر
-                    fetch("{{ route('stripe.payment') }}", {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
-                            },
-                            body: JSON.stringify({
-                                payment_method_id: paymentMethod.id,
-                                amount: {{ $totalPrice }} // مثال: 50 ريال (5000 هللة)
-                            })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("تمت العملية بنجاح");
-                            } else {
-                                document.getElementById('card-errors').textContent = data.message;
-                            }
-                        });
-                }
             });
+
+            // Function to send the payment method ID to the server
+            function processPayment(paymentMethodId, orderId) {
+                // Get the total amount from the page
+                const totalAmount = document.getElementById('total-price').innerText;
+                const amount = parseFloat(totalAmount.replace(/[^0-9.]/g, ''));
+
+                // Send the payment information to your server
+                fetch('/stripe/payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            payment_method_id: paymentMethodId,
+                            amount: amount,
+                            order_id: orderId || null
+                        })
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.requires_action) {
+                            // Use Stripe.js to handle the required action
+                            stripe.handleCardAction(data.payment_intent_client_secret)
+                                .then(function(result) {
+                                    if (result.error) {
+                                        // Show error to your customer
+                                        const errorElement = document.getElementById('card-errors');
+                                        errorElement.textContent = result.error.message;
+
+                                        // Re-enable the submit button
+                                        submitButton.disabled = false;
+                                        buttonText.classList.remove('d-none');
+                                        spinner.classList.add('d-none');
+                                    } else {
+                                        // The card action has been handled
+                                        // The PaymentIntent can be confirmed again on the server
+                                        fetch('/stripe/payment', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            },
+                                            body: JSON.stringify({
+                                                payment_intent_id: result.paymentIntent.id
+                                            })
+                                        }).then(function(confirmResult) {
+                                            return confirmResult.json();
+                                        }).then(handleServerResponse);
+                                    }
+                                });
+                        } else {
+                            handleServerResponse(data);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+
+                        // Handle fetch error
+                        const errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = 'Network error. Please try again.';
+
+                        // Re-enable the submit button
+                        submitButton.disabled = false;
+                        buttonText.classList.remove('d-none');
+                        spinner.classList.add('d-none');
+                    });
+            }
+
+            function handleServerResponse(data) {
+                if (data.success) {
+                    // Show the success message
+                    window.location.href = '/';
+                } else {
+                    // Handle payment error
+                    const errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = data.error || 'An error occurred during payment processing.';
+
+                    // Re-enable the submit button
+                    submitButton.disabled = false;
+                    buttonText.classList.remove('d-none');
+                    spinner.classList.add('d-none');
+                }
+            }
+
+            // Handle payment method selection
+            const paymentMethodSelectors = document.querySelectorAll('.payment-method-selector');
+            paymentMethodSelectors.forEach(selector => {
+                selector.addEventListener('click', function() {
+                    // Remove selected class from all selectors
+                    paymentMethodSelectors.forEach(s => s.classList.remove('selected'));
+                    // Add selected class to clicked selector
+                    this.classList.add('selected');
+                    // Check the radio button
+                    this.querySelector('input[type="radio"]').checked = true;
+                });
+            });
+
+
+            //     const {
+            //         paymentMethod,
+            //         error
+            //     } = await stripe.createPaymentMethod({
+            //         type: 'card',
+            //         card: cardNumber,
+            //         billing_details: {
+            //             name: cardholderName,
+            //         },
+            //     });
+
+            //     if (error) {
+            //         document.getElementById('card-errors').textContent = error.message;
+            //     } else {
+            //         // إرسال إلى السيرفر
+            //         fetch("{{ route('stripe.payment') }}", {
+            //                 method: 'POST',
+            //                 headers: {
+            //                     'Content-Type': 'application/json',
+            //                     'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+            //                 },
+            //                 body: JSON.stringify({
+            //                     payment_method_id: paymentMethod.id,
+            //                     amount: {{ $totalPrice }}
+            //                 })
+            //             })
+            //             .then(res => res.json())
+            //             .then(data => {
+            //                 if (data.success) {
+            //                     return response.json();
+            //                 } else {
+            //                     document.getElementById('card-errors').textContent = data.message;
+            //                 }
+            //             });
+            //     }
+            // });
         });
     </script>
 
