@@ -44,15 +44,15 @@
                         <div class="row">
 
                             @forelse ($products as $product)
-                                <div class="col-12 col-md-4 mb-4">
+                                <a href="{{ route('products.show', $product) }}" class="col-12 col-md-4 mb-4">
                                     <div class="d-flex flex-column card-product  gap-1">
                                         <div class="product-img d-flex align-items-center justify-content-center">
-                                            <img src="{{ asset( $product->images()->first()->image_url) }}"
-                                                alt="منتج" class="img-fluid ">
+                                            <img src="{{ asset($product->images()->first()->image_url) }}" alt="منتج"
+                                                class="img-fluid ">
                                         </div>
                                         <p class="product-name">{{ $product->name }}</p>
                                     </div>
-                                </div>
+                                </a>
                             @empty
                                 <div class="col-12">
                                     <div class="alert alert-warning text-center">

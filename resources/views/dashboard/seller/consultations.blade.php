@@ -147,7 +147,7 @@
                                         </td>
                                         <td>
                                             <span
-                                                class="badge bg-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
+                                                class="badge text-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2 justify-content-center">

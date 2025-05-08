@@ -5,292 +5,11 @@
 @endsection
 
 @section('css')
-    <style>
-        /* Chat container styles */
-        .chat-container {
-            /* height: calc(100vh - 120px); */
-            background-color: var(--primary-bg);
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            height: 500px
-        }
-
-        /* Sidebar styles */
-        .chat-sidebar {
-            background-color: #fff;
-            border-left: 1px solid #e0e0e0;
-            height: 100%;
-            overflow-y: auto;
-            padding-left: 0 !important;
-        }
-
-        .chat-sidebar-header {
-            padding: 15px;
-            background: var(--main-color);
-            color: white;
-            font-weight: bold;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .chat-contacts {
-            overflow-y: auto;
-            height: calc(100% - 60px);
-        }
-
-        .chat-contact {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .chat-contact:hover {
-            background-color: #f5f5f5;
-        }
-
-        .chat-contact.active {
-            background-color: #e8f0fe;
-            border-right: 3px solid var(--main-color-hover);
-        }
-
-        .contact-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .contact-info {
-            width: calc(100% - 60px);
-        }
-
-        .contact-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .contact-last-message {
-            color: #666;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 150px;
-        }
-
-        .unread-badge {
-            background-color: #3a2a6c;
-            color: white;
-            border-radius: 50%;
-            min-width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-
-        /* Chat main area styles */
-        .chat-main {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background-color: #f8f9fa;
-        }
-
-        .chat-header {
-            padding: 15px;
-            padding-left: 0 !important;
-            background-color: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-        }
-
-        .chat-header-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-left: 10px;
-            object-fit: cover;
-        }
-
-        .chat-header-info h5 {
-            margin-bottom: 0;
-            font-weight: bold;
-        }
-
-        .chat-header-info p {
-            color: #666;
-            margin-bottom: 0;
-            font-size: 0.85rem;
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #f8f9fa;
-            min-height: 368px;
-            max-height: 336px;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            max-width: 50%;
-        }
-
-        .message-sent {
-            align-self: flex-end;
-        }
-
-        .message-received {
-            align-self: flex-start;
-            margin-right: auto;
-        }
-
-        .message-content {
-            padding: 10px 15px;
-            border-radius: 18px;
-            position: relative;
-            word-wrap: break-word;
-        }
-
-        .message-sent .message-content {
-            background-color: #e8f0fe;
-            border-bottom-right-radius: 5px;
-        }
-
-        .message-received .message-content {
-            background: var(--primary-bg);
-            color: black;
-            border-bottom-left-radius: 5px;
-        }
-
-        .message-time {
-            font-size: 0.7rem;
-            color: #999;
-            margin-top: 5px;
-            align-self: flex-end;
-        }
-
-        .message-sent .message-time {
-            align-self: flex-end;
-        }
-
-        .message-received .message-time {
-            align-self: flex-start;
-        }
-
-        /* .chat-content {
-                                                        max-height: 440px;
-                                                    } */
-
-        #chatArea {
-            gap: 14px;
-        }
-
-        .chat-input-form {
-            display: flex;
-            align-items: center;
-        }
-
-        .chat-input-field {
-            flex: 1;
-            border: 1px solid #e0e0e0;
-            border-radius: 24px;
-            padding: 10px 15px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .chat-input-field:focus {
-            border-color: #3a2a6c;
-        }
-
-        .chat-send-btn {
-            background: var(--main-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .chat-send-btn:hover {
-            background-color: #2a1a5c;
-        }
-
-        .no-chat-selected {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #999;
-        }
-
-        .no-chat-selected i {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            color: #ddd;
-        }
-
-        .no-chat-selected h4 {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 767.98px) {
-            .chat-sidebar {
-                position: fixed;
-                top: 0;
-                right: 0;
-                width: 80%;
-                height: 100vh;
-                z-index: 1000;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            }
-
-            .chat-sidebar.show {
-                transform: translateX(0);
-            }
-
-            .chat-sidebar-toggle {
-                display: block !important;
-            }
-
-            .chat-container {
-                height: calc(100vh - 80px);
-            }
-        }
-
-        .chat-sidebar-toggle {
-            display: none;
-            background-color: #3a2a6c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1001;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/chat.css') }}">
 @endsection
 
 @section('content')
-    <div class="">
+    <div class="container">
         <div class="row">
             <div class="col-12">
                 <div class="chat-container">
@@ -307,7 +26,7 @@
                                 @if (Auth::user()->role != 'consultant')
                                     <span>المستشارين</span>
                                 @else
-                                    <span>البائعين</span>
+                                    <span>المزارعون</span>
                                 @endif
                             </div>
                             <div class="chat-contacts">
@@ -339,7 +58,7 @@
                         </div>
 
                         <!-- Chat Main Area -->
-                        <div class="col-md-8 col-lg-9 chat-main">
+                        <div class="col-md-7 col-lg-8 chat-main">
                             <div id="noChatSelected" class="no-chat-selected">
                                 <i class="fas fa-comments"></i>
                                 <h4>اختر محادثة للبدء</h4>
@@ -353,7 +72,7 @@
                                         <img id="chatHeaderAvatar" src="" alt="" class="chat-header-avatar">
                                         <div class="chat-header-info">
                                             <h5 id="chatHeaderName"></h5>
-                                            {{-- <h5 id="chatHeaderSpecialization"></h5> --}}
+                                            <h5 id="chatHeaderSpecialization"></h5>
                                         </div>
                                     </div>
                                     <!-- Student Name Above Messages -->
@@ -371,7 +90,7 @@
                                         <input type="text" id="messageInput" class="chat-input-field"
                                             placeholder="اكتب رسالتك ..." autocomplete="off">
                                         <button type="submit" class="chat-send-btn">
-                                            <i class="fas fa-paper-plane"></i>
+                                           إرسال
                                         </button>
                                     </form>
                                 </div>
@@ -413,7 +132,7 @@
             const chatForm = document.getElementById('chatForm');
             const messageInput = document.getElementById('messageInput');
             const chatHeaderName = document.getElementById('chatHeaderName');
-            // const chatHeaderSpecialization = document.getElementById('chatHeaderSpecialization');
+            const chatHeaderSpecialization = document.getElementById('chatHeaderSpecialization');
             const chatHeaderAvatar = document.getElementById('chatHeaderAvatar');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const chatSidebar = document.getElementById('chatSidebar');
@@ -443,7 +162,7 @@
 
                     // Update chat header
                     chatHeaderName.textContent = userName;
-                    // chatHeaderSpecialization.textContent = specialization;
+                    chatHeaderSpecialization.textContent = specialization;
                     chatHeaderAvatar.src = userAvatar;
 
                     // Show chat area

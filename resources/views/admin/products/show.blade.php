@@ -88,7 +88,7 @@
                             <div class="product-gallery">
                                 <div class="main-image mb-3">
                                     @if ($product->images->count() > 0)
-                                        <img src="{{ asset( $product->images()->first()->image_url) }}"
+                                        <img src="{{ asset($product->images()->first()->image_url) }}"
                                             alt="{{ $product->name }}" class="product-image" id="main-product-image">
                                     @else
                                         <div
@@ -101,11 +101,9 @@
                                 @if ($product->images->count() > 1)
                                     <div class="thumbnails d-flex flex-wrap gap-2">
                                         @foreach ($product->images as $image)
-                                            <img src="{{ asset( $image->image_url) }}"
-                                                alt="{{ $product->name }}"
+                                            <img src="{{ asset($image->image_url) }}" alt="{{ $product->name }}"
                                                 class="product-thumbnail {{ $image->id === $product->images()->first()->id ? 'active' : '' }}"
-                                                data-src="{{ asset( $image->image_url) }}"
-                                                onclick="changeMainImage(this)">
+                                                data-src="{{ asset($image->image_url) }}" onclick="changeMainImage(this)">
                                         @endforeach
                                     </div>
                                 @endif
@@ -129,11 +127,11 @@
                                     <h5>وصف المنتج:</h5>
                                     <p>{!! $product->description ?? 'لا يوجد وصف متاح' !!}</p>
                                 </div>
-
                                 <div class="seller-info">
                                     <h5>معلومات البائع:</h5>
                                     <p><strong>الاسم:</strong> {{ $product->user->name ?? 'غير معروف' }}</p>
-                                    <p><strong>البريد الإلكتروني:</strong> {{ $product->user->email ?? 'غير متاح' }}</p>
+                                    <p><strong>البريد الإلكتروني:</strong> {{ $product->user->email ?? 'غير متاح' }}
+                                    </p>
                                     <p><strong>تاريخ التسجيل:</strong>
                                         {{ $product->user->created_at->format('Y-m-d') ?? 'غير متاح' }}</p>
                                 </div>

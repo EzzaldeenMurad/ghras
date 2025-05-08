@@ -35,14 +35,6 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="card-title">إدارة المنتجات</h5>
-
-                        @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                        @endif
                     </div>
 
                     <div class="table-responsive">
@@ -63,7 +55,7 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 @if ($product->images()->first())
-                                                    <img src="{{ asset($product->images()->first()->image_url) }}"
+                                                    <img src="{{ $product->images()? asset($product->images()->first()->image_url): asset('assets/images/img1.png') }}"
                                                         alt="{{ $product->name }}" class="product-img">
                                                 @else
                                                     <div
@@ -119,10 +111,5 @@
 @endsection
 
 @section('scripts')
-    <script>
-        // Auto-dismiss alerts after 5 seconds
-        setTimeout(function() {
-            $('.alert').alert('close');
-        }, 5000);
-    </script>
+
 @endsection

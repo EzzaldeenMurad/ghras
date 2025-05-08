@@ -16,17 +16,3 @@
         </div>
     </div>
 </div>
-
-@section('scripts')
-    @if (session('success') || session('error'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
-                alertModal.show();
-                setTimeout(function() {
-                    alertModal.hide();
-                }, 3000);
-            });
-        </script>
-    @endif
-@endsection

@@ -38,7 +38,7 @@
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <img src="{{ asset($user->image ? $user->image : 'assets/images/consultant.png') }}"
+                                                <img src="{{ $user->image ? asset($user->image) : asset('assets/images/logo.png') }}"
                                                     alt="{{ $user->name }}" class="img">
                                                 <span>{{ $user->name }}</span>
                                             </div>
