@@ -146,7 +146,8 @@
                                         <td class="consultation-details">{{ $consultation->description }}
                                         </td>
                                         <td>
-                                            <span class="badge bg-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
+                                            <span
+                                                class="badge bg-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2 justify-content-center">
@@ -163,7 +164,7 @@
                                                                 class="btn p-0 btn-sm action-icon" title="pay"><i
                                                                     class="fa-brands fa-paypal"></i></a>
                                                         @else
-                                                            <a href="#" class="btn p-0 btn-sm action-icon"
+                                                            <a href="{{ route('chat') }}" class="btn p-0 btn-sm action-icon"
                                                                 title="محادثة مع المستشار">
                                                                 <i class="fas fa-comments chat-icon"></i>
                                                             </a>

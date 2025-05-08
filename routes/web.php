@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\consultantController;
 use App\Http\Controllers\Dashboard\consultant\ConsultantOrderController;
 use App\Http\Controllers\Dashboard\Seller\consultationController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\paymentController;
 use App\Http\Controllers\ProductController;
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 
@@ -124,8 +126,21 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
+// Stripe Routes
 Route::get('/payment/{id}', [paymentController::class, 'index'])->name('payment.index');
 Route::post('/stripe/payment', [paymentController::class, 'handlePayment'])->name('stripe.payment');
+
+
+Route::get('/chat', [ChatController::class, 'index'])
+    // ->middleware(['auth'])
+    ->name('chat');
+
+// روت جلب الرسائل
+Route::get('/chat/messages', [ChatController::class, 'getMessages']);
+
+// روت إرسال الرسالة
+Route::post('/chat/send', [ChatController::class, 'sendMessage']);
+Broadcast::routes(['middleware' => ['auth']]);
 
 
 // Authentication Routes

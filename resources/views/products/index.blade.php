@@ -10,7 +10,6 @@
             display: none !important;
         }
 
-        /* إخفاء scroll الخاص بالمتصفح إن وجد */
         .category-swiper::-webkit-scrollbar {
             width: 0px;
             background: transparent;
@@ -46,7 +45,7 @@
                 <!-- Categories Filter -->
                 <div class="filter-box">
                     <!-- Swiper Container -->
-                    <div class="swiper category-swiper" style="height:370px;">
+                    <div class="swiper category-swiper" style="min-height:370px; max-height:450px; overflow: hidden;">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
                                 <form id="categoryFilterForm" action="{{ route('products.index') }}" method="GET">
@@ -62,7 +61,7 @@
 
                                             @if (count($category->children) > 0)
                                                 <div style="padding-right: 15px;">
-                                                    @foreach ($category->children as $index => $child)
+                                                    @foreach ($category->children as $child)
                                                         <div class="filter-item">
                                                             <input type="radio" id="child_{{ $child->id }}"
                                                                 name="child_id" value="{{ $child->id }}"
@@ -101,7 +100,7 @@
                     <!-- Products -->
                     @forelse ($products as $product)
                         <div class="col-md-4">
-                            <a href="{{ route('products.show', $product->id) }}" class="product-card ">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#alertModal" class="product-card ">
                                 <div class="product-img">
                                     <img src="{{ asset($product->images()->first()->image_url) }}"
                                         alt="{{ $product->name }}">
@@ -110,15 +109,10 @@
                                     <h5 class="product-title">{{ $product->name }}</h5>
                                     <p class="product-desc">{!! Str::limit($product->description, 50) !!}</p>
                                     <div class="d-flex justify-content-center align-items-center mb-2">
-                                        <div class="rating  border-black ps-2">{{-- border-start --}}
+                                        <div class="rating  border-black ps-2">
                                             <i class="fas fa-star"></i>
                                             <span class="ms-1 rating-text">{{ $product->rate() }}/5</span>
                                         </div>
-                                        <!-- comments -->
-                                        {{-- <div class="comments pe-3">
-                                            <span class="comment-icon"><i class="fas fa-comment"></i></span>
-                                            <span class="comment-count">3</span>
-                                        </div> --}}
                                     </div>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <span>{{ $product->price }} ريال</span>
