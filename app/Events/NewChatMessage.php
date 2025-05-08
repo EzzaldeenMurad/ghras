@@ -2,8 +2,9 @@
 
 namespace App\Events;
 
-use App\Models\Message;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,36 +16,25 @@ class NewChatMessage implements ShouldBroadcast
 
     public $message;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(Message $message)
+    public function __construct($message)
     {
         $this->message = $message;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        // Create a private channel between the two users
-        $channelName = $this->getChannelName($this->message->sender_id, $this->message->receiver_id);
-        return [
-            new PrivateChannel($channelName),
-        ];
+        // إنشاء قناة خاصة بكل زوج من المستخدمين
+        $ids = [$this->message->sender_id, $this->message->receiver_id];
+        sort($ids);
+        return new PrivateChannel('chat.' . $ids[0] . '.' . $ids[1]);
     }
 
-    /**
-     * Generate a consistent channel name for two users regardless of who is sender/receiver
-     */
-    private function getChannelName($userId1, $userId2)
+    public function broadcastWith()
     {
-        // Sort IDs to ensure consistent channel naming
-        $ids = [$userId1, $userId2];
-        sort($ids);
-        return 'chat.' . $ids[0] . '.' . $ids[1];
+        return [
+            'message' => $this->message,
+            'sender' => $this->message->sender,
+            'receiver' => $this->message->receiver
+        ];
     }
 }

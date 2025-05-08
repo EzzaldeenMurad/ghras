@@ -106,8 +106,21 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
-    public function lastMessageSent(): HasOne
+    public function lastMessage(): HasOne
     {
         return $this->hasOne(Message::class, 'sender_id')->latestOfMany();
+    }
+    public function lastChatMessage($withUserId)
+    {
+        return Message::where(function ($query) use ($withUserId) {
+            $query->where('sender_id', $this->id)
+                ->where('receiver_id', $withUserId);
+        })
+            ->orWhere(function ($query) use ($withUserId) {
+                $query->where('sender_id', $withUserId)
+                    ->where('receiver_id', $this->id);
+            })
+            ->latest()
+            ->first();
     }
 }

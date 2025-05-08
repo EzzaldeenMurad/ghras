@@ -163,11 +163,17 @@
                                                             <a href="{{ route('payment.index', $consultation->id) }}"
                                                                 class="btn p-0 btn-sm action-icon" title="pay"><i
                                                                     class="fa-brands fa-paypal"></i></a>
-                                                        @else
-                                                            <a href="{{ route('chat') }}" class="btn p-0 btn-sm action-icon"
-                                                                title="محادثة مع المستشار">
-                                                                <i class="fas fa-comments chat-icon"></i>
-                                                            </a>
+                                                        @elseif ($consultation->status == 'paid')
+                                                            <form action="{{ route('chat') }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="consultant_id"
+                                                                    value="{{ $consultation->consultation->consultant->id }}">
+                                                                <button type="submit" class="btn p-0 btn-sm action-icon"
+                                                                    title="محادثة مع المستشار">
+                                                                    <i class="fas fa-comments chat-icon"></i>
+
+                                                                </button>
+                                                            </form>
                                                     @endif
 
                                                 </div>

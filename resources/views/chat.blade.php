@@ -8,12 +8,12 @@
     <style>
         /* Chat container styles */
         .chat-container {
-            height: calc(100vh - 120px);
-            background-color: #f8f9fa;
-            border-radius: 10px;
+            /* height: calc(100vh - 120px); */
+            background-color: var(--primary-bg);
+            border-radius: 5px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+            height: 500px
         }
 
         /* Sidebar styles */
@@ -149,6 +149,7 @@
 
         .message-received {
             align-self: flex-start;
+            margin-right: auto;
         }
 
         .message-content {
@@ -164,8 +165,8 @@
         }
 
         .message-received .message-content {
-            background: linear-gradient(90deg, #54B6B7 0%, #61528B 100%);
-            color: white;
+            background: var(--primary-bg);
+            color: black;
             border-bottom-left-radius: 5px;
         }
 
@@ -184,15 +185,13 @@
             align-self: flex-start;
         }
 
-        .chat-content {
-            max-height: 440px;
-        }
+        /* .chat-content {
+                                                        max-height: 440px;
+                                                    } */
 
-        /* .chat-input {
-                            padding: 15px;
-                            background-color: #fff;
-                            border-top: 1px solid #e0e0e0;
-                        } */
+        #chatArea {
+            gap: 14px;
+        }
 
         .chat-input-form {
             display: flex;
@@ -291,7 +290,7 @@
 @endsection
 
 @section('content')
-    <div class="container">
+    <div class="">
         <div class="row">
             <div class="col-12">
                 <div class="chat-container">
@@ -303,8 +302,8 @@
 
                         <!-- Chat Sidebar -->
                         <div class="col-md-4 col-lg-3 chat-sidebar" id="chatSidebar">
-                            <div class="chat-sidebar-header">
-                                <i class="fas fa-comments me-2"></i>
+                            <div class="chat-sidebar-header text-center">
+
                                 @if (Auth::user()->role != 'consultant')
                                     <span>المستشارين</span>
                                 @else
@@ -327,7 +326,7 @@
                                                 @endif
                                             </div>
                                             <div class="contact-last-message">
-                                                {{ $user->last_message ?? 'لا توجد رسائل' }}
+                                                {{ $user->last_message->message ?? 'لا توجد رسائل' }}
                                             </div>
                                         </div>
                                     </div>
@@ -354,7 +353,7 @@
                                         <img id="chatHeaderAvatar" src="" alt="" class="chat-header-avatar">
                                         <div class="chat-header-info">
                                             <h5 id="chatHeaderName"></h5>
-                                            <h5 id="chatHeaderSpecialization"></h5>
+                                            {{-- <h5 id="chatHeaderSpecialization"></h5> --}}
                                         </div>
                                     </div>
                                     <!-- Student Name Above Messages -->
@@ -370,7 +369,7 @@
                                 <div class="chat-input">
                                     <form id="chatForm" class="chat-input-form">
                                         <input type="text" id="messageInput" class="chat-input-field"
-                                            placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                                            placeholder="اكتب رسالتك ..." autocomplete="off">
                                         <button type="submit" class="chat-send-btn">
                                             <i class="fas fa-paper-plane"></i>
                                         </button>
@@ -389,23 +388,21 @@
     <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
             let currentUserId = null;
             const authUserId = {{ Auth::id() }};
+            let pusherChannel = null;
 
-            // Pusher setup
-            const pusherAppKey = '{{ config('broadcasting.connections.pusher.key') }}';
-            const pusherAppCluster = '{{ config('broadcasting.connections.pusher.options.cluster') }}';
-
-            const pusher = new Pusher(pusherAppKey, {
-                cluster: pusherAppCluster,
+            // Initialize Pusher
+            const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+                cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
                 forceTLS: true,
                 authEndpoint: '/broadcasting/auth',
-                // auth: {
-                //     headers: {
-                //         'X-CSRF-Token': '{{ csrf_token() }}',
-                //         'Authorization': 'Bearer ' + '{{ auth()->user()->token ?? '' }}'
-                //     }
-                // }
+                auth: {
+                    headers: {
+                        'X-CSRF-Token': '{{ csrf_token() }}'
+                    }
+                }
             });
 
             // DOM elements
@@ -416,7 +413,7 @@
             const chatForm = document.getElementById('chatForm');
             const messageInput = document.getElementById('messageInput');
             const chatHeaderName = document.getElementById('chatHeaderName');
-            const chatHeaderSpecialization = document.getElementById('chatHeaderSpecialization');
+            // const chatHeaderSpecialization = document.getElementById('chatHeaderSpecialization');
             const chatHeaderAvatar = document.getElementById('chatHeaderAvatar');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const chatSidebar = document.getElementById('chatSidebar');
@@ -431,28 +428,36 @@
             // Handle contact selection
             chatContacts.forEach(contact => {
                 contact.addEventListener('click', function() {
+                    // Update active state
                     chatContacts.forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
 
+                    // Get user data
                     const userId = this.dataset.userId;
                     const userName = this.dataset.userName;
-                    const specialization = this.dataset.chatHeaderSpecialization;
+                    const specialization = this.dataset.specialization;
                     const userAvatar = this.querySelector('.contact-avatar').src;
 
+                    // Update current user
                     currentUserId = userId;
 
                     // Update chat header
                     chatHeaderName.textContent = userName;
-                    chatHeaderSpecialization.textContent = specialization;
+                    // chatHeaderSpecialization.textContent = specialization;
                     chatHeaderAvatar.src = userAvatar;
 
                     // Show chat area
                     noChatSelected.style.display = 'none';
                     chatArea.style.display = 'flex';
 
-                    // Load messages and subscribe to channel
+                    // Load messages
                     loadMessages(userId);
+
+                    // Subscribe to Pusher channel
                     subscribeToChannel(authUserId, userId);
+
+                    // Mark messages as read
+                    markMessagesAsRead(userId);
 
                     // Hide sidebar on mobile
                     if (window.innerWidth < 768) {
@@ -467,11 +472,18 @@
                 });
             });
 
+            // Load messages for a user
             function loadMessages(userId) {
-                chatMessages.innerHTML =
-                    '<div class="text-center my-3"><div class="spinner-border text-primary" role="status"></div></div>';
+                chatMessages.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                    <p class="mt-2">جاري تحميل الرسائل...</p>
+                </div>`;
 
-                fetch(`/chat/messages?user_id=${userId}`)
+                fetch(`/chat/messages?user_id=${userId}`, )
+
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -480,23 +492,35 @@
                     })
                     .then(data => {
                         chatMessages.innerHTML = '';
+
                         if (data.messages && data.messages.length > 0) {
                             data.messages.forEach(message => {
                                 appendMessage(message, authUserId);
                             });
                             scrollToBottom();
+                            const notFound = document.querySelector('.not-found');
+                            if (notFound) {
+                                notFound.remove();
+                            }
                         } else {
-                            chatMessages.innerHTML =
-                                '<div class="text-center my-3 text-muted">لا توجد رسائل بعد</div>';
+                            chatMessages.innerHTML = `
+                            <div class="not-found text-center py-5 text-muted">
+                                <i class="fas fa-comment-slash fa-2x mb-3"></i>
+                                <p>لا توجد رسائل بعد</p>
+                            </div>`;
                         }
                     })
                     .catch(error => {
                         console.error('Error loading messages:', error);
-                        chatMessages.innerHTML =
-                            '<div class="text-center my-3 text-danger">حدث خطأ أثناء تحميل الرسائل</div>';
+                        chatMessages.innerHTML = `
+                        <div class="text-center py-5 text-danger">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <p>حدث خطأ أثناء تحميل الرسائل</p>
+                        </div>`;
                     });
             }
 
+            // Append a message to the chat
             function appendMessage(message, authUserId) {
                 const isReceived = message.sender_id != authUserId;
                 const messageElement = document.createElement('div');
@@ -509,38 +533,106 @@
                 });
 
                 messageElement.innerHTML = `
-                    <div class="message-content">${message.message}</div>
-                    <div class="message-time">${timeString}</div>
-                `;
+                <div class="message-content">${message.message}</div>
+                <div class="message-time">${timeString}</div>
+            `;
 
                 chatMessages.appendChild(messageElement);
             }
 
+            // Subscribe to Pusher channel
+            // استبدال كود الاشتراك في Pusher بهذا الكود
             function subscribeToChannel(user1Id, user2Id) {
+                // إلغاء أي اشتراكات سابقة
+                if (pusherChannel) {
+                    pusher.unsubscribe(pusherChannel);
+                }
+
+                // ترتيب IDs لضمان اسم قناة متسق
                 const ids = [parseInt(user1Id), parseInt(user2Id)].sort();
                 const channelName = `private-chat.${ids[0]}.${ids[1]}`;
 
-                if (window.currentChannel) {
-                    pusher.unsubscribe(window.currentChannel);
-                }
-
+                // الاشتراك في القناة الجديدة
+                pusherChannel = channelName;
                 const channel = pusher.subscribe(channelName);
-                window.currentChannel = channelName;
 
-                channel.bind('NewMessage', function(data) {
-                    if (data.message && (data.message.sender_id == currentUserId || data.message
-                            .receiver_id == currentUserId)) {
+                // الاستماع للرسائل الجديدة
+                channel.bind('NewChatMessage', function(data) {
+                    console.log('New message received:', data); // لأغراض التصحيح
+
+                    // التحقق من أن الرسالة موجهة للمحادثة الحالية
+                    if (data.message &&
+                        (data.message.sender_id == currentUserId ||
+                            data.message.receiver_id == currentUserId)) {
+
                         appendMessage(data.message, authUserId);
                         scrollToBottom();
+
+                        // تحديث حالة القراءة إذا كانت الرسالة واردة
+                        if (data.message.receiver_id == authUserId) {
+                            markMessageAsRead(data.message.id);
+                        }
+
+                        // تحديث قائمة المحادثات الجانبية
+                        updateSidebarConversation(data.message);
                     }
                 });
             }
 
+            // دالة مساعدة لتحديث المحادثة في القائمة الجانبية
+            function updateSidebarConversation(message) {
+                const contact = document.querySelector(`.chat-contact[data-user-id="${message.sender_id}"]`);
+                if (contact) {
+                    const lastMessageEl = contact.querySelector('.contact-last-message');
+                    if (lastMessageEl) {
+                        lastMessageEl.textContent = message.message;
+                    }
+
+                    // نقل المحادثة إلى الأعلى
+                    const contactsContainer = document.querySelector('.chat-contacts');
+                    if (contactsContainer) {
+                        contactsContainer.prepend(contact.parentNode);
+                    }
+                }
+            }
+            // Mark messages as read
+            function markMessagesAsRead(userId) {
+                fetch('/chat/mark-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        sender_id: userId
+                    })
+                }).catch(error => console.error('Error marking messages as read:', error));
+            }
+
+            // Mark single message as read
+            function markMessageAsRead(messageId) {
+                fetch('/chat/mark-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        message_id: messageId
+                    })
+                }).catch(error => console.error('Error marking message as read:', error));
+            }
+
+            // Handle message submission
             chatForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
                 const message = messageInput.value.trim();
                 if (!message || !currentUserId) return;
+
+                // Disable input during submission
+                messageInput.disabled = true;
+                chatForm.querySelector('button').disabled = true;
 
                 fetch('/chat/send', {
                         method: 'POST',
@@ -565,19 +657,31 @@
                             appendMessage(data.message, authUserId);
                             scrollToBottom();
                         } else {
-                            console.error('Error sending message:', data.error || 'Unknown error');
-                            alert('حدث خطأ أثناء إرسال الرسالة');
+                            throw new Error(data.error || 'Unknown error');
                         }
                     })
                     .catch(error => {
                         console.error('Error sending message:', error);
                         alert('حدث خطأ أثناء إرسال الرسالة');
+                    })
+                    .finally(() => {
+                        messageInput.disabled = false;
+                        chatForm.querySelector('button').disabled = false;
+                        messageInput.focus();
                     });
             });
 
+            // Scroll to bottom of chat
             function scrollToBottom() {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+
+            // Auto focus input when chat area is shown
+            chatArea.addEventListener('transitionend', function() {
+                if (chatArea.style.display === 'flex') {
+                    messageInput.focus();
+                }
+            });
         });
     </script>
 @endsection

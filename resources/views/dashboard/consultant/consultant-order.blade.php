@@ -62,6 +62,17 @@
                                                         </button>
                                                     </div>
                                                 </form>
+                                            @elseif ($order->status == 'paid')
+                                                <form action="{{ route('chat') }}" method="post">
+                                                    @csrf
+                                                    {{-- <input type="hidden" name="consultant_id"
+                                                        value="{{ $order->seller->id }}"> --}}
+                                                    <button type="submit" class="btn p-0 btn-sm action-icon"
+                                                        title="محادثة مع المستشار">
+                                                        <i class="fas fa-comments chat-icon"></i>
+
+                                                    </button>
+                                                </form>
                                             @endif
 
                                         </td>

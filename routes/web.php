@@ -131,16 +131,12 @@ Route::get('/payment/{id}', [paymentController::class, 'index'])->name('payment.
 Route::post('/stripe/payment', [paymentController::class, 'handlePayment'])->name('stripe.payment');
 
 
-Route::get('/chat', [ChatController::class, 'index'])
-    // ->middleware(['auth'])
-    ->name('chat');
-
-// روت جلب الرسائل
-Route::get('/chat/messages', [ChatController::class, 'getMessages']);
-
-// روت إرسال الرسالة
-Route::post('/chat/send', [ChatController::class, 'sendMessage']);
-Broadcast::routes(['middleware' => ['auth']]);
+Route::middleware(['auth'])->group(function () {
+    Route::post('/chat', [ChatController::class, 'index'])->name('chat');
+    Route::get('/chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/mark-as-read', [ChatController::class, 'markAsRead'])->name('chat.markAsRead');
+});
 
 
 // Authentication Routes
