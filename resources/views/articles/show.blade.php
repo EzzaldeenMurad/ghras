@@ -5,6 +5,22 @@
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/css/articles.css') }}">
     <style>
+        .swiper-container .swiper-scrollbar {
+            display: none !important;
+        }
+
+        .swiper-container::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .swiper-container{
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE 10+ */
+        }
+
         .swiper-container {
             max-height: 320px !important;
             overflow: hidden;
@@ -19,8 +35,8 @@
 
         .star-container {
             /* background-color: var(--secondary-color);
-                                color: var(--main-color);
-                                border-radius: var(--main-radius); */
+                                    color: var(--main-color);
+                                    border-radius: var(--main-radius); */
             width: 50%;
         }
     </style>
@@ -72,7 +88,6 @@
             <div class="row ">
 
                 <div class="col-5">
-                    <!-- filepath: e:\myProjects\laravel\laravel_project\ghras\resources\views\articles\show.blade.php -->
                     <div class="swiper-container" style=" overflow: hidden;">
                         <div class="swiper-wrapper">
                             @forelse ($article->reviews as $review)
@@ -134,42 +149,6 @@
                         <!-- Add scrollbar -->
                         <div class="swiper-scrollbar"></div>
                     </div>
-                    {{-- <div>
-
-                        @forelse ($article->reviews as $review)
-                            <div class="">
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center">
-                                        <div
-                                            style="width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; overflow: hidden; margin-left: 10px;">
-                                            <img src="{{ asset($review->user->image) ?? asset('assets/images/consultant.png') }}"
-                                                alt="صورة شخصية"
-                                                class="bi bi-person-fill d-flex justify-content-center align-items-center h-100"
-                                                style="font-size: 1.5rem;"></img>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0">{{ $review->user->name }}</h6>
-                                            <small class="text-muted">{{ $article->user->region }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <p>{{ $review->review }}</p>
-                                    <div class="rating" id="rating-">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <span data-value="{{ $i }}" class="rating-star ">★</span>
-                                        @endfor
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="alert alert-warning text-center">
-                                    لا توجد تعليقات لعرضها.
-                                </div>
-                            </div>
-                        @endforelse
-                    </div> --}}
                     <div class="mt-4" id="review-div">
                         <form action="{{ route('articles.review.store') }}" method="post"
                             class="input-group comment-form ">
@@ -221,7 +200,7 @@
             }
         }
     </script>
-    
+
     <script>
         const swiper = new Swiper('.swiper-container', {
             direction: 'vertical',

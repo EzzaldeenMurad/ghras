@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ReviewFormRequest;
 use Illuminate\Http\Request;
 use App\Models\Article;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -38,6 +39,11 @@ class ArticlesController extends Controller
     }
     public function storeReview(ReviewFormRequest $request)
     {
+        if (Auth::guest()) {
+            return back()
+                ->with('success', 'يرجى تسجيل الدخول اولا');
+        }
+        
         $id = $request->input('article_id');
         $review = $request->input('review');
         $rating = $request->input('rating');
@@ -51,6 +57,6 @@ class ArticlesController extends Controller
             'buyer_id' => $buyer->id
         ]);
         return redirect()->route('articles.show', $article->id)
-            ->with('success', 'تم التقييم بنجاح');
+            ->with('success', 'تم التعليق بنجاح');
     }
 }
