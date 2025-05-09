@@ -69,10 +69,8 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
             Route::put('/{product}/update', [AdminProductController::class, 'update'])->name('admin.products.update');
             Route::delete('/{product}/destroy', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
         });
+        Route::get('/orders', [AdminProductController::class, 'orders'])->name('admin.orders');
 
-        Route::get('/orders', function () {
-            return view('admin.orders');
-        })->name('admin.orders');
 
         // Route::get('/articles', function () {
         //     return view('admin.articles.index');

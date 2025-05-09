@@ -29,7 +29,7 @@ class StatisticsController extends Controller
         $productsCount = Product::count();
 
         // Get total sales (orders count)
-        // $salesCount = Order::count();
+        $orderCount = Order::count();
 
         // // Get total purchases (sum of order items)
         // $purchasesCount = DB::table('order_items')->count();
@@ -39,7 +39,7 @@ class StatisticsController extends Controller
             'customersCount',
             'adminsCount',
             'productsCount',
-            // 'salesCount',
+            'orderCount',
             // 'purchasesCount',
         ));
     }

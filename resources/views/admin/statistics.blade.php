@@ -127,16 +127,16 @@
                     </div>
                     <div class="col-md-4">
                         <div class="stat-card danger">
-                            <h3 class="stat-title">المبيعات</h3>
-                            <div class="stat-number">{{ $salesCount ?? 0 }}</div>
+                            <h3 class="stat-title">اجمالي الطلبات</h3>
+                            <div class="stat-number">{{ $orderCount ?? 0 }}</div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="stat-card purple">
                             <h3 class="stat-title">المشتريات</h3>
                             <div class="stat-number">{{ $purchasesCount ?? 0 }}</div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

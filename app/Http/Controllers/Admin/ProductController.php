@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -46,5 +47,14 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')
             ->with('success', 'تم حذف المنتج بنجاح');
+    }
+
+    public function orders()
+    {
+        $query = Order::with(['user', 'items.product.user', 'items.product.images']);
+
+        $orders = $query->latest()->paginate(10);
+
+        return view('admin.orders', compact('orders'));
     }
 }

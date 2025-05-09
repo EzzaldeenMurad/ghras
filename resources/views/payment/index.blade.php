@@ -294,7 +294,9 @@
 
                 const cardholderName = document.getElementById('cardholder-name').value;
                 const orderId = document.getElementById('order-id').value;
-
+                submitButton.disabled = true;
+                submitButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري المعالجة...';
                 // Create a PaymentMethod
                 stripe.createPaymentMethod({
                     type: 'card',

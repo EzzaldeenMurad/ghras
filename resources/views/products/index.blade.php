@@ -102,7 +102,8 @@
                         <div class="col-md-4">
                             {{-- <a href="{{ route('products.show', $product->id) }}" class="product-card "> --}}
                             <div class="product-img">
-                                <img src="{{ asset($product->images()->first()->image_url) }}" alt="{{ $product->name }}">
+                                <img src="{{ $product->images() ? asset($product->images()->first()->image_url ?? 'assets/images/img1.png') : asset('assets/images/img1.png') }}"
+                                    alt="{{ $product->name }}">
                             </div>
                             <div class="text-center p-3">
                                 <h5 class="product-title">{{ $product->name }}</h5>
