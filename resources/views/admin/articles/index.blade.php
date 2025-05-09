@@ -22,9 +22,6 @@
                         </button>
                     </div>
 
-                    @include('alerts.success')
-
-
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -42,8 +39,8 @@
                                         <td>{{ $article->title }}</td>
                                         <td>{{ Str::limit($article->content, 50) }}</td>
                                         <td>
-                                            <img src="{{ asset($article->image_url) }}" alt="{{ $article->title }}"
-                                                class="article-img">
+                                            <img src="{{ $article->image_url ? asset($article->image_url) : asset('assets/images/logo.png') }}"
+                                                alt="{{ $article->title }}" class="article-img">
                                         </td>
                                         <td>{{ $article->created_at->format('d M Y') }}</td>
                                         <td>
@@ -53,7 +50,8 @@
                                                     <i class="fas fa-eye" title="عرض"></i>
                                                 </button> --}}
                                                 <button class="btn p-0 btn-sm action-icon edit-article"
-                                                    data-id="{{ $article->id }}">
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editArticleModal{{ $article->id }}">
                                                     <i class="fas fa-edit" title="تعديل"></i>
                                                 </button>
                                                 <form action="{{ route('admin.articles.destroy', $article) }}"
@@ -68,6 +66,88 @@
                                             </div>
                                         </td>
                                     </tr>
+
+                                    <!-- Edit Modal لكل مقال -->
+                                    <div class="modal fade" id="editArticleModal{{ $article->id }}" tabindex="-1"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-full">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0 pb-0"></div>
+
+                                                <div class="modal-body px-4 pt-0">
+                                                    <div class="container">
+                                                        <h1 class="title-modal text-center fw-bold mb-2">تعديل المقال</h1>
+
+                                                        <form action="{{ route('admin.articles.update', $article->id) }}"
+                                                            method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="row">
+                                                                <!-- صورة المقال -->
+                                                                <div class="col-lg-4 mb-4">
+                                                                    <label for="editImage"
+                                                                        class="form-label fw-bold text-start d-block">صورة
+                                                                        المقال</label>
+                                                                    <input type="file" name="image_url" id="editImage"
+                                                                        class="form-control" accept="image/*">
+
+                                                                    {{-- <input type="file" name="image_url"
+                                                                        class="form-control" accept="image/*"> --}}
+                                                                    <div id="currentImageContainer" class="mt-2">
+                                                                        <p class="mb-1">الصورة الحالية:</p>
+                                                                        <img id="currentArticleImage"
+                                                                            src="{{ asset($article->image_url ?? 'assets/images/logo.png') }}"
+                                                                            alt="صورة المقال" class="img-fluid"
+                                                                            style="max-height: 200px; border-radius: 8px;">
+                                                                    </div>
+                                                                    <div id="editImagePreview" class="mt-2 d-none">
+                                                                        <p class="mb-1">الصورة الجديدة:</p>
+                                                                        <img src="" alt="معاينة الصورة"
+                                                                            class="img-fluid" style="max-height: 200px;">
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- العنوان والمحتوى -->
+                                                                <div class="section-left col-lg-8">
+                                                                    <div class="mb-4">
+                                                                        <label
+                                                                            class="form-label fw-bold text-start d-block">عنوان
+                                                                            المقالة</label>
+                                                                        <input type="text" name="title"
+                                                                            class="form-control py-2"
+                                                                            value="{{ $article->title }}" required>
+                                                                    </div>
+
+                                                                    <div class="mb-4">
+                                                                        <label
+                                                                            class="form-label fw-bold text-start d-block">وصف
+                                                                            المقال</label>
+                                                                        <textarea name="content" class="form-control py-2" rows="8" required>{{ $article->content }}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- أزرار الحفظ والإلغاء -->
+                                                            <div
+                                                                class="modal-footer border-0 d-flex justify-content-between mt-3">
+                                                                <div class="container">
+                                                                    <div class="d-flex justify-content-center gap-4">
+                                                                        <button type="button"
+                                                                            class="btn px-4 py-2 fw-bold btn-custom btn-secondary"
+                                                                            data-bs-dismiss="modal">إلغاء</button>
+                                                                        <button type="submit"
+                                                                            class="btn px-4 py-2 fw-bold btn-custom btn-primary">
+                                                                            تحديث المقال
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @empty
                                     <tr>
                                         <td colspan="5" class="text-center">لا توجد مقالات</td>
@@ -112,24 +192,24 @@
         // });
 
         // Load article data for editing
-        $(document).on('click', '.edit-article', function() {
-            let articleId = $(this).data('id');
-            console.log(articleId);
-            $.ajax({
-                url: "{{ url('admin/articles') }}/" + articleId + "/edit",
-                type: 'GET',
-                success: function(response) {
-                    let article = response.article;
-                    $('#editArticleId').val(article.id);
-                    $('#editArticleTitle').val(article.title);
-                    $('#editArticleDescription').val(article.content);
-                    $('#currentArticleImage').attr('src', "{{ asset($article->image_url) }}");
-                    $('#editArticleForm').attr('action', "{{ url('admin/articles') }}/" + article.id +
-                        "/update");
-                    $('#editArticleModal').modal('show');
-                }
-            });
-        });
+        // $(document).on('click', '.edit-article', function() {
+        //     let articleId = $(this).data('id');
+        //     console.log(articleId);
+        //     $.ajax({
+        //         url: "{{ url('dashboard/admin/articles') }}/" + articleId + "/edit",
+        //         type: 'GET',
+        //         success: function(response) {
+        //             let article = response.article;
+        //             $('#editArticleId').val(article.id);
+        //             $('#editArticleTitle').val(article.title);
+        //             $('#editArticleDescription').val(article.content);
+        //             $('#currentArticleImage').attr('src', "{{ asset($article->image_url) }}");
+        //             $('#editArticleForm').attr('action', "{{ url('admin/articles') }}/" + article.id +
+        //                 "/update");
+        //             $('#editArticleModal').modal('show');
+        //         }
+        //     });
+        // });
 
         // Image preview for add modal
         $('#image').change(function() {
@@ -144,6 +224,7 @@
         $('#editImage').change(function() {
             let reader = new FileReader();
             reader.onload = (e) => {
+                $('#currentImageContainer').addClass('d-none').find('img').attr('src', e.target.result);
                 $('#editImagePreview').removeClass('d-none').find('img').attr('src', e.target.result);
             }
             reader.readAsDataURL(this.files[0]);

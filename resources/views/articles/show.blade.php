@@ -10,15 +10,18 @@
             overflow: hidden;
             max-width: 220px !important;
         }
+
         .star-container .stars-inactive {
             position: absolute;
             top: 0px;
+            left: 4px;
         }
+
         .star-container {
             /* background-color: var(--secondary-color);
-            color: var(--main-color);
-            border-radius: var(--main-radius); */
-            width: 60%;
+                                color: var(--main-color);
+                                border-radius: var(--main-radius); */
+            width: 50%;
         }
     </style>
 @endsection
@@ -89,7 +92,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{$review->rate }}
+                                    <div>
+                                        <span>{{ $review->review }} {{ $review->rate }}</span>
+                                    </div>
                                     <div class="star-container   position-relative">
                                         <span class="stars-active" style="width:{{ $review->rate * 20 }}%">
                                             <i class="fa-solid fa-star"></i>
@@ -216,7 +221,7 @@
             }
         }
     </script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    
     <script>
         const swiper = new Swiper('.swiper-container', {
             direction: 'vertical',

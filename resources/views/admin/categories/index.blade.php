@@ -29,16 +29,13 @@
                         </button>
                     </div>
 
-                    @include('alerts.success')
-
-
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>اسم الفئة</th>
                                     <th>الوصف</th>
-                                    <th>الصورة</th>
+                                    {{-- <th>الصورة</th> --}}
                                     <th>التصنيف التابع</th>
                                     <th>تاريخ الإنشاء</th>
                                     <th>الإجراءات</th>
@@ -50,14 +47,14 @@
                                     <tr>
                                         <td>{{ $category->name }}</td>
                                         <td>{{ Str::limit($category->description, 50) }}</td>
-                                        <td>
+                                        {{-- <td>
                                             @if ($category->image_url)
                                                 <img src="{{ asset($category->image_url) }}" alt="{{ $category->name }}"
                                                     class="category-img">
                                             @else
                                                 <span class="text-muted">لا توجد صورة</span>
                                             @endif
-                                        </td>
+                                        </td> --}}
                                         <td>{{ $category->children->count() > 0 ? $category->children->pluck('name')->implode(', ') : 'رئيسي' }}
                                         </td>
                                         <td>{{ $category->created_at->format('d M Y') }}</td>

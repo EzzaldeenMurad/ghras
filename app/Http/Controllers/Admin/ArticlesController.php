@@ -56,8 +56,7 @@ class ArticlesController extends Controller
             'image_url' => $imagePath,
         ]);
 
-        return redirect()->route('admin.articles')
-            ->with('success', 'تم إضافة المقال بنجاح');
+        return back()->with('success', 'تم إضافة المقال بنجاح');
     }
 
     /**
@@ -146,15 +145,14 @@ class ArticlesController extends Controller
 
     /**
      * Remove the specified article from storage.
-     *
+     *`
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
     public function destroy(Article $article)
     {
-        // Delete the article image
-        if ($article->image && Storage::disk('public')->exists($article->image)) {
-            Storage::disk('public')->delete($article->image);
+        if ($article->image_url && file_exists(public_path($article->image_url))) {
+            unlink(public_path($article->image_url));
         }
 
         $article->delete();

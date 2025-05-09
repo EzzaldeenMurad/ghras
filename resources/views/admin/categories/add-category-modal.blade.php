@@ -14,7 +14,7 @@
                         @csrf
                         <div class="row">
                             <!-- Image Upload -->
-                            <div class="col-lg-4 mb-4">
+                            {{-- <div class="col-lg-4 mb-4">
                                 <label for="categoryImage" class="form-label fw-bold text-start d-block">صورة
                                     الفئة</label>
                                 <input type="file" name="image_url" id="categoryImage" class="form-control"
@@ -23,10 +23,10 @@
                                     <img src="" alt="معاينة الصورة" class="img-fluid"
                                         style="max-height: 200px;">
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <!-- Name & Description -->
-                            <div class="section-left col-lg-8">
+                            <div class="section-left col-lg">
                                 <div class="mb-4">
                                     <label for="categoryName" class="form-label fw-bold text-start d-block">اسم
                                         الفئة</label>
@@ -35,8 +35,9 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="categoryName" class="form-label fw-bold text-start d-block">اختار
-                                     الرئيسية له   الفئة</label>
-                                    <select name="parent_id" id="" class="form-control py-2"  id="categoryNameParent">
+                                        الرئيسية له الفئة</label>
+                                    <select name="parent_id" id="" class="form-control py-2"
+                                        id="categoryNameParent">
                                         <option value="">الفئة الرئيسية</option>
                                         @foreach ($parentCategories as $category)
                                             <option value="{{ $category->id }}">{{ $category->name }}</option>

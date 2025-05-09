@@ -32,11 +32,11 @@ class ConsultantOrder extends Model
             case 'pending':
                 return 'قيد الانتظار';
             case 'accepted':
-                return 'مقبول';
+                return 'في انتظار الدفع';
             case 'cancelled':
                 return 'ملغي';
             default:
-                return $this->status;
+                return 'تم الدفع';
         }
     }
 
@@ -51,11 +51,11 @@ class ConsultantOrder extends Model
             case 'pending':
                 return 'warning';
             case 'accepted':
-                return 'success';
+                return 'secondary';
             case 'cancelled':
                 return 'danger';
             default:
-                return 'secondary';
+                return 'info';
         }
     }
 }

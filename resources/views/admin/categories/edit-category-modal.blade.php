@@ -14,7 +14,7 @@
                               <input type="hidden" name="id" value="{{ $category->id }}">
                               <div class="row">
                                   <!-- Image Upload -->
-                                  <div class="col-lg-4 mb-4">
+                                  {{-- <div class="col-lg-4 mb-4">
                                       <label for="editCategoryImage{{ $category->id }}"
                                           class="form-label fw-bold text-start d-block">صورة
                                           الفئة</label>
@@ -31,10 +31,10 @@
                                       </div>
                                       <small class="text-muted">اترك هذا الحقل فارغًا إذا كنت
                                           لا ترغب في تغيير الصورة</small>
-                                  </div>
+                                  </div> --}}
 
                                   <!-- Name & Description -->
-                                  <div class="section-left col-lg-8">
+                                  <div class="section-left col-lg">
                                       <div class="mb-4">
                                           <label for="editCategoryName{{ $category->id }}"
                                               class="form-label fw-bold text-start d-block">اسم

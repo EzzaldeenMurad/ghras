@@ -35,8 +35,10 @@ class ProductController extends Controller
     {
         // Delete all associated images
         foreach ($product->images as $image) {
-            Storage::disk('public')->delete($image->image_url);
-            $image->delete();
+            if ($image->image_url && file_exists(public_path($image->image_url))) {
+                unlink(public_path($image->image_url));
+                $image->delete();
+            }
         }
 
         // Delete the product

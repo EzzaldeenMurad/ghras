@@ -117,97 +117,80 @@
                         <h5 class="card-title">الإستشارات</h5>
 
                     </div>
-
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
                     {{-- @if (isset($consultations) && $consultations->count() > 0) --}}
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>المستشار</th>
+                                    <th>تاريخ</th>
+                                    <th>الموضوع</th>
+                                    <th>التفاصيل</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($consultations as $consultation)
                                     <tr>
-                                        <th>المستشار</th>
-                                        <th>تاريخ</th>
-                                        <th>الموضوع</th>
-                                        <th>التفاصيل</th>
-                                        <th>الحالة</th>
-                                        <th>الدفع</th>
-                                        <th>إجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($consultations as $consultation)
-                                        <tr>
-                                            <td>
-                                                <div class="consultant-profile">
-                                                    {{-- <img src="{{ $consultation->consultant->image ? asset($consultation->consultant->image) : asset('assets/images/avatar_user.jpg') }}"
+                                        <td>
+                                            <div class="consultant-profile">
+                                                {{-- <img src="{{ $consultation->consultant->image ? asset($consultation->consultant->image) : asset('assets/images/avatar_user.jpg') }}"
                                                      alt="{{ $consultation->consultant->name }}" class="consultant-avatar"> --}}
-                                                    <span
-                                                        class="consultant-name">{{ $consultation->consultation->consultant->name }}</span>
-                                                </div>
-                                            </td>
-                                            <td>{{ $consultation->created_at->format('d M Y') }}</td>
-                                            <td class="consultation-subject">{{ $consultation->subject }}</td>
-                                            <td class="consultation-details">{{ $consultation->description }}
-                                            </td>
-                                            <td>
-                                                <p>{{ $consultation->getStatusNameAttribute() }}</p>
-                                            </td>
-                                            <td>
-                                                @if ($consultation->payment_status == 'unpaid')
-                                                    <span class="pending">بانتظار الدفع</span>
-                                                @elseif($consultation->payment_status == 'paid')
-                                                    <span class="paid">تم الدفع</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="d-flex gap-2 justify-content-center">
-                                                    <div class="d-flex gap-2 justify-content-end">
-                                                        @if ($consultation->status == 'pending')
-                                                            <input type="hidden" name="order_id" value="">
+                                                <span
+                                                    class="consultant-name">{{ $consultation->consultation->consultant->name }}</span>
+                                            </div>
+                                        </td>
+                                        <td>{{ $consultation->created_at->format('d M Y') }}</td>
+                                        <td class="consultation-subject">{{ $consultation->subject }}</td>
+                                        <td class="consultation-details">{{ $consultation->description }}
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge text-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                    @if ($consultation->status == 'pending')
+                                                        <input type="hidden" name="order_id" value="">
 
-                                                            <a href="{{ route('seller.orders.cancelled', $consultation->id) }}"
-                                                                class="btn p-0 btn-sm action-icon" title="الغاء"
-                                                                value="cancelled"><i
-                                                                    class="fa-regular fa-circle-xmark text-danger"></i>
-                                                            </a>
-                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#alertModal" 
+                                                        <a href="{{ route('seller.orders.cancelled', $consultation->id) }}"
+                                                            class="btn p-0 btn-sm action-icon" title="الغاء"
+                                                            value="cancelled"><i
+                                                                class="fa-regular fa-circle-xmark text-danger"></i>
+                                                        @elseif($consultation->status == 'accepted')
+                                                            <a href="{{ route('payment.index', $consultation->id) }}"
                                                                 class="btn p-0 btn-sm action-icon" title="pay"><i
                                                                     class="fa-brands fa-paypal"></i></a>
-                                                        @elseif($consultation->status == 'accepted')
-                                                            <a href="#" class="btn p-0 btn-sm action-icon"
-                                                                title="محادثة مع المستشار">
-                                                                <i class="fas fa-comments chat-icon"></i>
-                                                            </a>
-                                                        @endif
-                                                    </div>
+                                                        @elseif ($consultation->status == 'paid')
+                                                            <form action="{{ route('chat') }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="consultant_id"
+                                                                    value="{{ $consultation->consultation->consultant->id }}">
+                                                                <button type="submit" class="btn p-0 btn-sm action-icon"
+                                                                    title="محادثة مع المستشار">
+                                                                    <i class="fas fa-comments chat-icon"></i>
+
+                                                                </button>
+                                                            </form>
+                                                    @endif
+
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center">لا يوجد استشارات</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    {{-- @else
-                        <p class="text-center">لا يوجد استشارات</p>
-                    @endif --}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">لا يوجد استشارات</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
-                <x-modal-alert></x-modal-alert>
+
             </div>
         </div>
     </div>

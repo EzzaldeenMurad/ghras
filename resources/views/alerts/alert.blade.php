@@ -1,25 +1,11 @@
-<script>
-    toastr.options = {
-        "positionClass": "toast-top-left",
-        "rtl": true,
-        timeOut: 5000, // 5 seconds
-        closeButton: true,
-        progressBar: true,
-        newestOnTop: true
-    };
-    @if (session('success'))
-        toastr.success('{{ session('success') }}');
-    @endif
-
-    @if (session('info'))
-        toastr.info('{{ session('info') }}');
-    @endif
-
-    @if (session('warning'))
-        toastr.warning('{{ session('warning') }}');
-    @endif
-
-    @if (session('error'))
-        toastr.error('{{ session('error') }}');
-    @endif
-</script>
+@if (session('success') || session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+            alertModal.show();
+            setTimeout(function() {
+                alertModal.hide();
+            }, 1800);
+        });
+    </script>
+@endif

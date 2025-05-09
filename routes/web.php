@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\consultantController;
 use App\Http\Controllers\Dashboard\Buyer\BuyerOrderController;
 use App\Http\Controllers\Dashboard\consultant\ConsultantOrderController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\paymentController;
 use App\Http\Controllers\ProductController;
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 
@@ -145,8 +147,17 @@ Route::get('/login', function () {
     return view('auth.login');
 });
 
+// Stripe Routes
 Route::get('/payment/{id}', [paymentController::class, 'index'])->name('payment.index');
 Route::post('/stripe/payment', [paymentController::class, 'handlePayment'])->name('stripe.payment');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/chat', [ChatController::class, 'index'])->name('chat');
+    Route::get('/chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/mark-as-read', [ChatController::class, 'markAsRead'])->name('chat.markAsRead');
+});
 
 
 // Authentication Routes

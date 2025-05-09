@@ -10,7 +10,6 @@
             display: none !important;
         }
 
-        /* إخفاء scroll الخاص بالمتصفح إن وجد */
         .category-swiper::-webkit-scrollbar {
             width: 0px;
             background: transparent;
@@ -46,7 +45,7 @@
                 <!-- Categories Filter -->
                 <div class="filter-box">
                     <!-- Swiper Container -->
-                    <div class="swiper category-swiper" style="height:370px;">
+                    <div class="swiper category-swiper" style="min-height:370px; max-height:450px; overflow: hidden;">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
                                 <form id="categoryFilterForm" action="{{ route('products.index') }}" method="GET">
@@ -62,7 +61,7 @@
 
                                             @if (count($category->children) > 0)
                                                 <div style="padding-right: 15px;">
-                                                    @foreach ($category->children as $index => $child)
+                                                    @foreach ($category->children as $child)
                                                         <div class="filter-item">
                                                             <input type="radio" id="child_{{ $child->id }}"
                                                                 name="child_id" value="{{ $child->id }}"
