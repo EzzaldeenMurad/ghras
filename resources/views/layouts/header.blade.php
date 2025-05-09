@@ -41,12 +41,12 @@
             @else
                 @if (auth()->user()->role === 'buyer')
                     <div class="cart position-relative ms-3">
-                        <a href="{{ route('cart') }}"
+                        <a href="{{ route('cart.index') }}"
                             class="d-flex align-items-center text-decoration-none text-dark me-2">
                             <i class="fa fa-shopping-cart fa-lg position-relative "></i>
                             <span
                                 class="cart-count position-absolute top-0.5 start-100 translate-middle badge rounded-pill ">
-                                0
+                                {{ Cart::count() }}
                             </span>
                         </a>
                     </div>

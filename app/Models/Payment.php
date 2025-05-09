@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-   protected $fillable = [
+    protected $fillable = [
         'payment_method',
         'amount',
         'status',
@@ -15,4 +15,13 @@ class Payment extends Model
         'consultant_order_id',
         'user_id',
     ];
+
+
+    /**
+     * Get the user that owns the payment.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'payer_id');
+    }
 }

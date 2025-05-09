@@ -8,9 +8,11 @@ use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\consultantController;
+use App\Http\Controllers\Dashboard\Buyer\BuyerOrderController;
 use App\Http\Controllers\Dashboard\consultant\ConsultantOrderController;
 use App\Http\Controllers\Dashboard\Seller\consultationController;
 use App\Http\Controllers\Dashboard\Seller\ProductController as SellerProductController;
+use App\Http\Controllers\Dashboard\Seller\SellerOrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\paymentController;
 use App\Http\Controllers\ProductController;
@@ -86,6 +88,12 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
         Route::resource('categories', CategoryController::class);
     });
 
+
+    Route::get('/orders', [SellerOrderController::class, 'index'])->name('seller.orders');
+    Route::put('/orders/{id}/update-status', [SellerOrderController::class, 'updateStatus'])->name('seller.orders.update-status');
+
+
+
     // Seller and Buyer Routes
     Route::prefix('/seller')->group(function () {
         Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products.index');
@@ -94,15 +102,13 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
         Route::get('/consultations', [consultationController::class, 'index'])->name('seller.consultations');
         Route::get('/consultations/cancelled/{id}', [consultationController::class, 'cancelledOrder'])->name('seller.orders.cancelled');
 
-        Route::get('/orders', function () {
-            return view('dashboard.seller.orders');
-        })->name('seller.orders');
+        // Route::get('/orders', function () {
+        //     return view('dashboard.seller.orders');
+        // })->name('seller.orders');
     });
     // Buyer Routes
     Route::prefix('/buyer')->group(function () {
-        Route::get('/mysells', function () {
-            return view('dashboard.buyer.mysells');
-        })->name('buyer.mysells');
+        Route::get('/orders', [BuyerOrderController::class, 'index'])->name('buyer.mysells');
     });
 
     // Consultant Routes
@@ -115,10 +121,25 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
+// Add this route with your other payment routes
+Route::post('/payment/store-session', [App\Http\Controllers\paymentController::class, 'storeSession'])->name('payment.store-session');
+// Payment Routes
+Route::post('/payment/process', [App\Http\Controllers\paymentController::class, 'process'])->name('payment.process');
+Route::get('/payment/callback', [App\Http\Controllers\paymentController::class, 'callback'])->name('payment.callback');
+Route::get('/orders/success/{id}', [App\Http\Controllers\paymentController::class, 'success'])->name('orders.success');
+// Create payment intent for Stripe Elements
+Route::post('/payment/create-intent', [App\Http\Controllers\paymentController::class, 'createIntent'])->name('payment.create-intent');
+// Cart Routes
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{id}', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+Route::get('/cart/remove/{rowId}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+Route::get('/cart/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
+Route::get('/cart/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
 
-Route::get('/cart', function () {
-    return view('cart.index');
-})->name('cart');
+// Route::get('/cart', function () {
+//     return view('cart.index');
+// })->name('cart');
 
 Route::get('/login', function () {
     return view('auth.login');

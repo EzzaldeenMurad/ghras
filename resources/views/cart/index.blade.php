@@ -8,108 +8,158 @@
 
 @section('content')
     <div class="cart-container container mt-5">
-        <div class="d-flex  align-items-center me-5">
+        <div class="d-flex align-items-center me-5">
             <a href="{{ route('home') }}" class="btn btn-primary">رجوع</a>
         </div>
         <div>
-            <h1 class="tiltle  text-center mb-5">سلة المشتريات</h1>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>حذف المنتج</th>
-                        <th>صورة المنتج</th>
-                        <th>اسم المنتج</th>
-                        <th>الكمية</th>
-                        <th>السعر</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <button class="delete-btn">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <div class="product-image">
-                                <img src="../assets/images/img1.png" alt="تمر ">
+            <h1 class="tiltle text-center mb-5">سلة المشتريات</h1>
+
+            @if ($cartItems->count() > 0)
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>صورة المنتج</th>
+                            <th>اسم المنتج</th>
+                            <th>الكمية</th>
+                            <th>السعر</th>
+                            <th>المجموع</th>
+                            <th>حذف المنتج</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cartItems as $item)
+                            <tr data-id="{{ $item->rowId }}">
+                                <td>
+                                    <div class="product-img ">
+                                        @if (isset($item->options['image']))
+                                            <img src="{{ asset($item->options['image']) }}" alt="{{ $item->name }}"
+                                                class="w-10 h-10">
+                                        @else
+                                            <div class="no-image">لا توجد صورة</div>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td>{{ $item->name }}</td>
+                                <td>
+                                    <div class="quantity-control d-flex">
+                                        <button class="quantity-btn minus p-1" data-id="{{ $item->rowId }}">-</button>
+                                        <input type="text" min="1" class="quantity-input text-center"
+                                            style="width: 40px;" value="{{ $item->qty }}" data-id="{{ $item->rowId }}">
+                                        <button class="quantity-btn plus p-1" data-id="{{ $item->rowId }}">+</button>
+                                    </div>
+                                </td>
+                                <td>{{ $item->price }} ريال</td>
+                                <td class="item-subtotal">{{ $item->subtotal }} ريال</td>
+                                <td>
+                                    <a href="{{ route('cart.remove', $item->rowId) }}" class="delete-btn text-decoration-none">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                <div class="cart-summary">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="summary-card">
+                                <h4>ملخص السلة</h4>
+                                <div class="d-flex justify-content-between">
+                                    <span>المجموع الفرعي:</span>
+                                    <span id="cart-subtotal">{{ Cart::instance()->subtotal() }} ريال</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>الضريبة:</span>
+                                    <span id="cart-tax">{{ Cart::instance()->tax() }} ريال</span>
+                                </div>
+                                <div class="d-flex justify-content-between total">
+                                    <span>المجموع:</span>
+                                    <span id="cart-total">{{ Cart::instance()->total() }} ريال</span>
+                                </div>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <a href="{{ route('cart.clear') }}" class="btn btn-outline-danger">تفريغ السلة</a>
+                                    <a href="{{ route('cart.checkout') }}" class="btn btn-primary">إتمام الطلب</a>
+                                </div>
                             </div>
-                        </td>
-                        <td>تمر طازج</td>
-                        <td>
-                            <div class="d-flex align-items-center ">
-                                <button class="quantity-btn"><span class="text-quantity-btn">+</span></button>
-                                <input type="text" value="1" class="quantity-input" readonly>
-                                <button class="quantity-btn"><span class="text-quantity-btn">-</span></button>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="old-price  text-decoration-line-through">219.00 ريال</div>
-                            <div class="new-price">50 ريال</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="me-5 d-flex flex-column gap-2">
-            <div class="total-container">
-                <div class="total">المجموع: 0 ريال</div>
-                <div class="note">* ملاحظة: هذا المجموع لا يشمل تكاليف التوصيل</div>
-            </div>
-            <div class="payment-button">
-                <button class="btn-primary">دفع قيمة الفاتورة</button>
-            </div>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div class="empty-cart text-center">
+                    <i class="fas fa-shopping-cart fa-4x mb-3"></i>
+                    <h3>سلة المشتريات فارغة</h3>
+                    <p>لم تقم بإضافة أي منتجات إلى سلة المشتريات بعد.</p>
+                    <a href="{{ route('products.index') }}" class="btn btn-primary mt-3">تصفح المنتجات</a>
+                </div>
+            @endif
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
     <script>
-        // Simple cart functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const quantityBtns = document.querySelectorAll('.quantity-btn');
-            const quantityInput = document.querySelector('.quantity-input');
-            const totalElement = document.querySelector('.total');
-            const deleteBtns = document.querySelectorAll('.delete-btn');
+        $(document).ready(function() {
+            // Update quantity when plus button is clicked
+            $('.quantity-btn.plus').on('click', function() {
+                const rowId = $(this).data('id');
+                const input = $(this).siblings('.quantity-input');
+                const currentValue = parseInt(input.val());
+                input.val(currentValue + 1);
+                updateCartItem(rowId, currentValue + 1);
+            });
 
-            // Starting price
-            const pricePerItem = 50;
+            // Update quantity when minus button is clicked
+            $('.quantity-btn.minus').on('click', function() {
+                const rowId = $(this).data('id');
+                const input = $(this).siblings('.quantity-input');
+                const currentValue = parseInt(input.val());
+                if (currentValue > 1) {
+                    input.val(currentValue - 1);
+                    updateCartItem(rowId, currentValue - 1);
+                }
+            });
 
-            // Update total
-            function updateTotal() {
-                const quantity = parseInt(quantityInput.value);
-                const total = quantity * pricePerItem;
-                totalElement.textContent = `المجموع: ${total} ريال`;
-            }
+            // Update quantity when input value changes
+            $('.quantity-input').on('change', function() {
+                const rowId = $(this).data('id');
+                const quantity = parseInt($(this).val());
+                if (quantity >= 1) {
+                    updateCartItem(rowId, quantity);
+                } else {
+                    $(this).val(1);
+                    updateCartItem(rowId, 1);
+                }
+            });
 
-            // Initialize
-            updateTotal();
+            // Function to update cart item
+            function updateCartItem(rowId, quantity) {
+                $.ajax({
+                    url: '{{ route('cart.update') }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        rowId: rowId,
+                        quantity: quantity
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update item subtotal
+                            const row = $(`tr[data-id="${rowId}"]`);
+                            const price = parseFloat(row.find('td:nth-child(5)').text());
+                            const newSubtotal = (price * quantity).toFixed(2);
+                            row.find('.item-subtotal').text(newSubtotal + ' ريال');
 
-            // Add quantity button listeners
-            quantityBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    let quantity = parseInt(quantityInput.value);
-
-                    if (this.textContent === '+') {
-                        quantity += 1;
-                    } else if (this.textContent === '-' && quantity > 1) {
-                        quantity -= 1;
+                            // Update cart totals
+                            $('#cart-subtotal').text(response.subtotal + ' ريال');
+                            $('#cart-total').text(response.total + ' ريال');
+                        }
+                    },
+                    error: function(error) {
+                        console.error('Error updating cart:', error);
                     }
-
-                    quantityInput.value = quantity;
-                    updateTotal();
                 });
-            });
-
-            // Add delete button listener
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    row.remove();
-                    totalElement.textContent = 'المجموع: 0 ريال';
-                });
-            });
+            }
         });
     </script>
 @endsection

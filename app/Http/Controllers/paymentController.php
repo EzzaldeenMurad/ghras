@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\ConsultantOrder;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -11,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
-
+use Surfsidemedia\Shoppingcart\Facades\Cart;
 // use Stripe\PaymentIntent;
 
 class paymentController extends Controller
@@ -21,7 +23,7 @@ class paymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(int  $id)
+    public function index(int $id)
     {
         $order = ConsultantOrder::with('consultation')->findOrFail($id);
         $vat = 0;
@@ -168,7 +170,7 @@ class paymentController extends Controller
     private function savePaymentConsultantOrder($paymentIntent, $orderId)
     {
         try {
-            
+
             $payment =    Payment::create([
                 'amount' => $paymentIntent->amount,
                 'status' => $paymentIntent->status,
@@ -182,6 +184,210 @@ class paymentController extends Controller
         } catch (\Exception $e) {
             // Log the error but don't interrupt the user flow
             Log::error('Error saving payment record: ' . $e->getMessage());
+        }
+    }
+
+    // ===============
+
+
+    /**
+     * Process the payment
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function process(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'city' => 'required|string|max:100',
+            'address' => 'required|string',
+        ]);
+
+        try {
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            $amount = (int)(Cart::instance()->total() * 100); // Convert to cents
+
+            // Store order data in session BEFORE creating payment intent
+            session()->put('order_data', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'city' => $request->city,
+                'amount' => Cart::instance()->total(),
+            ]);
+
+            // Make sure session is saved immediately
+            session()->save();
+
+            // $paymentIntent = PaymentIntent::create([
+            //     'amount' => $amount,
+            //     'currency' => 'sar',
+            //     'metadata' => [
+            //         'user_id' => auth()->id() ?? 'guest',
+            //         'name' => $request->name,
+            //         'email' => $request->email,
+            //         'phone' => $request->phone,
+            //         'address' => $request->address,
+            //         'city' => $request->city,
+            //     ],
+            // ]);
+            $this->callback($request);
+            // return response()->json([
+            //     'clientSecret' => $paymentIntent->client_secret,
+            // ]);
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function callback(Request $request)
+    {
+        $paymentIntentId = $request->payment_intent;
+        $orderData = session()->get('order_data');
+
+        // Log for debugging
+        Log::info('Payment callback received', [
+            'payment_intent' => $paymentIntentId,
+            'order_data' => $orderData,
+            'session_id' => session()->getId()
+        ]);
+
+        // Remove the dd() statement that was interrupting the flow
+        // dd($paymentIntentId);
+
+        if (!$paymentIntentId || !$orderData) {
+            // If order data is missing, try to get it from the payment intent metadata
+            try {
+                Stripe::setApiKey(env('STRIPE_SECRET'));
+                $paymentIntent = PaymentIntent::retrieve($paymentIntentId);
+
+                if (!$orderData && isset($paymentIntent->metadata->name)) {
+                    $orderData = [
+                        'name' => $paymentIntent->metadata->name,
+                        'email' => $paymentIntent->metadata->email,
+                        'phone' => $paymentIntent->metadata->phone,
+                        'address' => $paymentIntent->metadata->address,
+                        'city' => $paymentIntent->metadata->city,
+                        'amount' => $paymentIntent->amount / 100,
+                    ];
+
+                    // Store it in session for future use
+                    session()->put('order_data', $orderData);
+                }
+
+                // If still no order data, redirect to cart
+                if (!$orderData) {
+                    return redirect()->route('cart.index')->with('error', 'حدث خطأ أثناء معالجة الدفع: بيانات الطلب غير متوفرة');
+                }
+            } catch (\Exception $e) {
+                Log::error('Error retrieving payment intent: ' . $e->getMessage());
+                return redirect()->route('cart.index')->with('error', 'حدث خطأ أثناء معالجة الدفع');
+            }
+        }
+
+        try {
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+            $paymentIntent = PaymentIntent::retrieve($paymentIntentId);
+
+            if ($paymentIntent->status === 'succeeded') {
+                // Create order with the retrieved data
+                $order = Order::create([
+                    'user_id' => auth()->id(),
+                    'name' => $orderData['name'],
+                    'email' => $orderData['email'],
+                    'phone' => $orderData['phone'],
+                    'address' => $orderData['address'],
+                    'city' => $orderData['city'],
+                    'total' => $orderData['amount'],
+                    'payment_id' => $paymentIntentId,
+                    'status' => 'paid',
+                ]);
+
+                // Create order items
+                foreach (Cart::instance()->content() as $item) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $item->id,
+                        'quantity' => $item->qty,
+                        'price' => $item->price,
+                    ]);
+                }
+
+                // Create payment record
+                Payment::create([
+                    'payment_id' => $paymentIntentId,
+                    'user_id' => auth()->id() ?? null,
+                    'amount' => $orderData['amount'],
+                    'status' => 'completed',
+                    'payment_method' => 'stripe',
+                ]);
+
+                // Clear cart and session data
+                Cart::instance()->destroy();
+                session()->forget('order_data');
+
+                return redirect()->route('orders.success', $order->id)->with('success', 'تم إتمام الطلب بنجاح');
+            } else {
+                return redirect()->route('cart.checkout')->with('error', 'فشلت عملية الدفع، يرجى المحاولة مرة أخرى');
+            }
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe callback error: ' . $e->getMessage());
+            return redirect()->route('cart.checkout')->with('error', 'حدث خطأ أثناء معالجة الدفع');
+        }
+    }
+    // ... existing code ...
+
+    /**
+     * Display the order success page
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function success($id)
+    {
+        $order = Order::with('items.product')->findOrFail($id);
+
+        // Check if the order belongs to the authenticated user
+        if (auth()->check() && $order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('orders.success', compact('order'));
+    }
+
+    /**
+     * Create a payment intent for Stripe Elements
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createIntent(Request $request)
+    {
+        try {
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            $amount = (int)($request->amount * 100); // Convert to cents
+
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $amount,
+                'currency' => 'sar',
+                'metadata' => [
+                    'user_id' => auth()->id() ?? 'guest',
+                ],
+            ]);
+
+            return response()->json([
+                'clientSecret' => $paymentIntent->client_secret,
+            ]);
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

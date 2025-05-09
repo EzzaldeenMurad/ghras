@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('buyer_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->integer('quantity');
-            $table->integer('total_price');
-            $table->string('status');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('name');
+            $table->string('email');
+            $table->string('phone');
+            $table->text('address');
+            $table->string('city');
+            $table->decimal('total', 10, 2);
+            $table->string('payment_id')->nullable();
+            $table->enum('status', ['pending', 'processing', 'paid', 'shipped', 'delivered', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }
