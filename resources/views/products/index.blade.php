@@ -100,54 +100,55 @@
                     <!-- Products -->
                     @forelse ($products as $product)
                         <div class="col-md-4">
-                            {{-- <a href="{{ route('products.show', $product->id) }}" class="product-card "> --}}
-                            <div class="product-img">
-                                <img src="{{ $product->images() ? asset($product->images()->first()->image_url ?? 'assets/images/img1.png') : asset('assets/images/img1.png') }}"
-                                    alt="{{ $product->name }}">
-                            </div>
-                            <div class="text-center p-3">
-                                <h5 class="product-title">{{ $product->name }}</h5>
-                                <p class="product-desc">{!! Str::limit($product->description, 50) !!}</p>
-                                <div class="d-flex justify-content-center align-items-center mb-2">
-                                    <div class="rating  border-black ps-2">{{-- border-start --}}
-                                        <i class="fas fa-star"></i>
-                                        <span class="ms-1 rating-text">{{ $product->rate() }}/5</span>
-                                    </div>
-                                    <!-- comments -->
-                                    {{-- <div class="comments pe-3">
+                            <a href="{{ route('products.show', $product->id) }}" class="product-card ">
+                                <div class="product-img">
+                                    <img src="{{ $product->images() ? asset($product->images()->first()->image_url ?? 'assets/images/img1.png') : asset('assets/images/img1.png') }}"
+                                        alt="{{ $product->name }}">
+                                </div>
+                                <div class="text-center p-3">
+                                    <h5 class="product-title">{{ $product->name }}</h5>
+                                    <p class="product-desc">{!! Str::limit($product->description, 50) !!}</p>
+                                    <div class="d-flex justify-content-center align-items-center mb-2">
+                                        <div class="rating  border-black ps-2">{{-- border-start --}}
+                                            <i class="fas fa-star"></i>
+                                            <span class="ms-1 rating-text">{{ $product->rate() }}/5</span>
+                                        </div>
+                                        <!-- comments -->
+                                        {{-- <div class="comments pe-3">
                                             <span class="comment-icon"><i class="fas fa-comment"></i></span>
                                             <span class="comment-count">3</span>
                                         </div> --}}
-                                </div>
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <span>{{ $product->price }} ريال</span>
-                                </div>
-                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                    @csrf
-                                    @if (Cart::instance()->content()->where('id', $product->id)->count() > 0)
-                                        <button type="button" class="add-to-cart" disabled>أضف إلى السلة</button>
-                                    @else
-                                        <button type="submit" class="add-to-cart">اضافة للسلة</button>
-                                    @endif
-                                </form>
-                            </div>
-                            {{-- </a> --}}
+                                    </div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <span>{{ $product->price }} ريال</span>
+                                    </div>
+                            </a>
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                @csrf
+                                @if (Cart::instance()->content()->where('id', $product->id)->count() > 0)
+                                    <button type="button" class="add-to-cart" disabled>أضف إلى السلة</button>
+                                @else
+                                    <button type="submit" class="add-to-cart">اضافة للسلة</button>
+                                @endif
+                            </form>
                         </div>
-                    @empty
-                        <div class="col-12">
-                            <div class="alert alert-warning text-center w-100">
-                                لا توجد منتجات لعرضها.
-                            </div>
-                        </div>
-                    @endforelse
-                </div>
 
-                <!-- Pagination -->
-                {{-- <div class="d-flex justify-content-center mt-4">
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-warning text-center w-100">
+                        لا توجد منتجات لعرضها.
+                    </div>
+                </div>
+                @endforelse
+            </div>
+
+            <!-- Pagination -->
+            {{-- <div class="d-flex justify-content-center mt-4">
                     {{ $products->appends(request()->query())->links() }}
                 </div> --}}
-            </div>
         </div>
+    </div>
     </div>
 @endsection
 

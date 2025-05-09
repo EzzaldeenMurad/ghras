@@ -143,7 +143,7 @@
                             </div>
                             <div class="row justify-content-center align-items-center g-2">
                                 <div class="col-12"> <span>تم شراؤه </span></div>
-                                <div class="col-12"> <span>102 مرة</span></div>
+                                <div class="col-12"> <span>{{ $purchased }} </span></div>
                             </div>
 
                         </div>
@@ -183,12 +183,21 @@
                     if (data.success) {
                         updateStars(productId, ratingValue);
                         updateRatingDisplay(productId, data.averageRating);
+                        document.getElementById('alertMessageJson').textContent = data.message;
                     } else {
-                        alert(data.message || "حدث خطأ.");
+                        document.getElementById('alertMessageJson').textContent = data.message;
+
+                        window.location.href = '/login';
                     }
+                    var alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+                    alertModal.show();
+                    setTimeout(function() {
+                        alertModal.hide();
+                    }, 1500);
                 })
                 .catch(error => console.error('Error:', error));
         }
+
         function updateStars(productId, ratingValue) {
             const container = document.getElementById(`rating-${productId}`);
             const stars = container.querySelectorAll('.rating-star');

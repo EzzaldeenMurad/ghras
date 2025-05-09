@@ -41,7 +41,7 @@
             </div>
 
             <div class="text-center pt-3">
-                <a href="{{ route('password.request') }}" class="d-block text-muted text-decoration-none mb-2">نسيت كلمة السر</a>
+                {{-- <a href="{{ route('password.request') }}" class="d-block text-muted text-decoration-none mb-2">نسيت كلمة السر</a> --}}
                 <a href="{{ route('register') }}" class="d-block text-muted text-decoration-none">إنشاء حساب</a>
             </div>
         </form>

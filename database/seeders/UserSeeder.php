@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
             'password' => '12345678',
             'role' => 'consultant',
             'specialization' => 'علوم تربة',
-            'image' => 'images/users/consultants1.png',
+            'image' => 'images/users/consultant.jpeg',
         ]);
         User::create([
             'name' => 'عبدالله السبيعي',
@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
             'password' => '12345678',
             'role' => 'consultant',
             'specialization' => 'علوم تربة',
-            'image' => 'images/users/consultant2.png',
+            'image' => 'images/users/consultant.jpeg',
         ]);
         User::create([
             'name' => ' علي السبيعي',
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
             'password' => '12345678',
             'role' => 'consultant',
             'specialization' => 'علوم طبيعة',
-            'image' => 'images/users/consultant3.png',
+            'image' => 'images/users/consultant.jpeg',
         ]);
         Consultation::create([
             'consultant_id' => 4,

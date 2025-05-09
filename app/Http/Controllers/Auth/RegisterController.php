@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -52,7 +53,7 @@ class RegisterController extends Controller
 
         // Send verification email
         // Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
-
+        Auth::login($user);
         // Store user ID in session for verification
         session(['user_id_for_verification' => $user->id]);
 

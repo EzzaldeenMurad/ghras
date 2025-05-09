@@ -12,9 +12,8 @@
             --text-color: #333333;
             --border-color: #E0D0B8;
         }
-        }
-
-        */ .payment-container {
+     
+        .payment-container {
             margin-top: 3rem;
             margin-bottom: 3rem;
         }

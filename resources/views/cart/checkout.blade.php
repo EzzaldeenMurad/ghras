@@ -33,6 +33,19 @@
 
             background-color: transparent;
         }
+
+        .btn-primary {
+            background-color: var(--primary-btn) !important;
+            border: none;
+            color: white;
+            /* padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 1rem; */
+
+        }
     </style>
 @endsection
 
@@ -84,7 +97,8 @@
                                 </div>
                             </div>
 
-                            <button id="submit-button" type="submit" class="btn btn-primary mt-4 w-100">إتمام
+                            <button id="submit-button" type="submit"
+                                class="btn  btn-primary mt-4 w-100">إتمام
                                 الطلب</button>
                         </form>
                     </div>

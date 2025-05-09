@@ -12,6 +12,9 @@
     --text-color: #5d4037;
     --light-text: #8d6e63;
     --border-color: #d7ccc8;
+    --primary-btn: #D2691E;
+    --primary-btn-hover: #B35A1F;
+
 
     --main-radius: 8px;
 }
@@ -160,5 +163,5 @@ a.dropdown-toggle::after {
     margin: auto;
     min-height: 150px;
     max-height: 300px;
-    
+
 }

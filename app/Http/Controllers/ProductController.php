@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -67,12 +68,18 @@ class ProductController extends Controller
     {
         //   dd($id);
         $product = Product::with('category', 'user', 'images')->find($id);
-
-        return view('products.show', compact('product'));
+        $purchased = OrderItem::where('product_id', $product->id)->count();
+        return view('products.show', compact('product','purchased'));
     }
 
     public function rate(Request $request)
     {
+        if (Auth::guest()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يجب تسجيل الدخول اولا'
+            ]);
+        }
         $value = $request->input('value');
         $product_id = $request->input('product_id');
         $product = Product::find($product_id);
@@ -81,7 +88,9 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'rating' => $rating->value,
-            'averageRating' => $product->rate()
+            'averageRating' => $product->rate(),
+            'message' => 'تم تقييم المنتج بنجاح'
+
         ]);
     }
 }
