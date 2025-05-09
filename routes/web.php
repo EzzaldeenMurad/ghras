@@ -61,7 +61,7 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
         //     return view('admin.users');
         // })->name('admin.users');
         Route::group(['prefix' => 'products'], function () {
-            Route::get('/', [AdminProductController::class, 'index'])->name('admin.products.index');
+            Route::get('/', [AdminProductController::class, 'index'])->name('admin.products');
             Route::get('/create', [AdminProductController::class, 'create'])->name('admin.products.create');
             Route::post('/store', [AdminProductController::class, 'store'])->name('admin.products.store');
             Route::get('/{product}', [AdminProductController::class, 'show'])->name('admin.products.show');
@@ -98,9 +98,14 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
 
     // Seller and Buyer Routes
     Route::prefix('/seller')->group(function () {
-        Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products.index');
+        Route::get('/products', [SellerProductController::class, 'index'])->name('seller.products');
         Route::get('/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
         Route::post('/products/store', [SellerProductController::class, 'store'])->name('seller.products.store');
+        Route::get('/products/{product}', [SellerProductController::class, 'show'])->name('seller.products.show');
+        Route::get('/products/{product}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
+        Route::put('/products/{product}/update', [SellerProductController::class, 'update'])->name('seller.products.update');
+        Route::post('/image/delete', [SellerProductController::class, 'destroyImage'])->name('seller.products.image.destroy');
+        Route::delete('/products/{product}/destroy', [SellerProductController::class, 'destroy'])->name('seller.products.destroy');
         Route::get('/consultations', [consultationController::class, 'index'])->name('seller.consultations');
         Route::get('/consultations/cancelled/{id}', [consultationController::class, 'cancelledOrder'])->name('seller.orders.cancelled');
 

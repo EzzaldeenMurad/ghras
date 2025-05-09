@@ -12,6 +12,9 @@
                         {{ session('error') }}
                     </div>
                 @endif
+                <div id="alertMessageJson" class="fw-bold fs-4">
+                </div>
+
             </div>
         </div>
     </div>

@@ -7,7 +7,7 @@
     if ($role === 'seller') {
         $menuItems = [
             ['title' => 'الملف الشخصي', 'route' => 'profile'],
-            ['title' => 'المنتجات', 'route' => 'seller.products.index'],
+            ['title' => 'المنتجات', 'route' => 'seller.products'],
             ['title' => 'الطلبات', 'route' => 'seller.orders'],
             ['title' => 'الاستشارات', 'route' => 'seller.consultations'],
         ];
@@ -37,7 +37,7 @@
         <ul class="sidebar-nav">
             @foreach ($menuItems as $item)
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs($item['route']) ? 'active' : '' }}"
+                    <a class="nav-link {{ request()->routeIs($item['route'] . '*') ? 'active' : '' }}"
                         href="{{ route($item['route']) }}">
                         {{ $item['title'] }}
                     </a>

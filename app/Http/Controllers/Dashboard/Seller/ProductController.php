@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard\Seller;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -95,6 +96,7 @@ class ProductController extends Controller
         ]);
         // Handle image uploads
         if ($request->hasFile('images')) {
+            // dd($request->file('images'));
             foreach ($request->file('images') as $image) {
                 $imageName = time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('images/products'), $imageName);
@@ -102,10 +104,11 @@ class ProductController extends Controller
                 $product->images()->create([
                     'image_url' => 'images/products/' . $imageName
                 ]);
+                // echo $imageName;
             }
         }
 
-        return redirect()->route('seller.products.index')
+        return redirect()->route('seller.products')
             ->with('success', 'تم إضافة المنتج بنجاح');
     }
 
@@ -119,7 +122,7 @@ class ProductController extends Controller
     {
         // Check if the product belongs to the authenticated user
         if ($product->user_id !== Auth::id()) {
-            return redirect()->route('seller.products.index')
+            return redirect()->route('seller.products')
                 ->with('error', 'غير مصرح لك بعرض هذا المنتج');
         }
 
@@ -136,7 +139,7 @@ class ProductController extends Controller
     {
         // Check if the product belongs to the authenticated user
         if ($product->user_id !== Auth::id()) {
-            return redirect()->route('seller.products.index')
+            return redirect()->route('seller.products')
                 ->with('error', 'غير مصرح لك بتعديل هذا المنتج');
         }
 
@@ -151,54 +154,70 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    // public function update(Request $request, Product $product)
-    // {
-    //     // Check if the product belongs to the authenticated user
-    //     if ($product->user_id !== Auth::id()) {
-    //         return redirect()->route('seller.products.index')
-    //             ->with('error', 'غير مصرح لك بتعديل هذا المنتج');
-    //     }
+    public function update(Request $request, Product $product)
+    {
+        // Check if the product belongs to the authenticated user
+        if ($product->user_id !== Auth::id()) {
+            return redirect()->route('seller.products')
+                ->with('error', 'غير مصرح لك بتعديل هذا المنتج');
+        }
 
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'price' => 'required|numeric|min:0',
-    //         'category_id' => 'required|exists:categories,id',
-    //         'description' => 'nullable|string',
-    //         'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    //     ]);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'nullable|string',
+            'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    //     $data = [
-    //         'name' => $request->name,
-    //         'price' => $request->price,
-    //         'category_id' => $request->category_id,
-    //         'description' => $request->description,
-    //     ];
+        $data = [
+            'name' => $request->name,
+            'price' => $request->price,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+        ];
 
 
-    //     if ($request->hasFile('image_url')) {
-    //         // Delete old image if exists
-    //         if ($product->identity_image && file_exists(public_path($product->images->image_url))) {
-    //             unlink(public_path($product->images->image_url));
-    //         }
+        if ($request->hasFile('image_url')) {
+            // Delete old image if exists
+            if ($product->identity_image && file_exists(public_path($product->images->image_url))) {
+                unlink(public_path($product->images->image_url));
+            }
+            $image = $request->file('image_url');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = 'images/products/' . $imageName;
 
-    //         $image = $request->file('image_url');
-    //         $imageName = time() . '.' . $image->getClientOriginalExtension();
-    //         $imagePath = 'images/products/' . $imageName;
+            // Make sure the directory exists
+            if (!file_exists(public_path('images/products'))) {
+                mkdir(public_path('images/products'), 0755, true);
+            }
 
-    //         // Make sure the directory exists
-    //         if (!file_exists(public_path('images/products'))) {
-    //             mkdir(public_path('images/products'), 0755, true);
-    //         }
+            $image->move(public_path('images/products'), $imageName);
+            $product->images->image_url = $imagePath;
+        }
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = time() . '.' . $image->getClientOriginalExtension();
+                $imagePath = 'images/products/' . $imageName;
 
-    //         $image->move(public_path('images/products'), $imageName);
-    //         $product->images->image_url = $imagePath;
-    //     }
+                // Make sure the directory exists
+                if (!file_exists(public_path('images/products'))) {
+                    mkdir(public_path('images/products'), 0755, true);
+                }
 
-    //     $product->update($data);
+                $image->move(public_path('images/products'), $imageName);
+                $product->images()->create([
+                    'image_url' => $imagePath,
+                ]);
+            }
+        }
+        $product->update($data);
 
-    //     return redirect()->route('seller.products.index')
-    //         ->with('success', 'تم تحديث المنتج بنجاح');
-    // }
+        return redirect()->route('seller.products')
+            ->with('success', 'تم تحديث المنتج بنجاح');
+    }
 
     /**
      * Remove the specified product from storage.
@@ -210,18 +229,40 @@ class ProductController extends Controller
     {
         // Check if the product belongs to the authenticated user
         if ($product->user_id !== Auth::id()) {
-            return redirect()->route('seller.products.index')
+            return redirect()->route('seller.products')
                 ->with('error', 'غير مصرح لك بحذف هذا المنتج');
         }
 
         // Delete product image
-        if ($product->image_url && file_exists(public_path($product->image_url))) {
-            unlink(public_path($product->image_url));
+        foreach ($product->images as $image) {
+            if (file_exists(public_path($image->image_url))) {
+                unlink(public_path($image->image_url));
+            }
+            $image->delete();
+        }
+        $product->delete();
+        return redirect()->route('seller.products')
+            ->with('success', 'تم حذف المنتج بنجاح');
+    }
+
+    public function destroyImage(Request $request)
+    {
+        $imagePath = "images/products/" . $request->filename;
+        $image = Image::where('image_url', $imagePath)->first();
+        if ($image) {
+            if ($image->image_url && file_exists(public_path($image->image_url))) {
+                unlink(public_path($image->image_url));
+            }
+
+            $image->delete();
+
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم حذف الصورة بنجاح'
+            ]);
         }
 
-        $product->delete();
-
-        return redirect()->route('seller.products.index')
-            ->with('success', 'تم حذف المنتج بنجاح');
+        return response()->json(['status' => 'error', 'message' => 'Image not found'], 404);
     }
 }

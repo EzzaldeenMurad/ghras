@@ -43,8 +43,8 @@
                 @forelse ($products as $product)
                     <a href="{{ route('products.show', $product->id) }}" class="col-md-3">
                         <div class="card product-card position-relative">
-                            <img src="{{ asset($product->images()->first()->image_url) }}" class="card-img-top product-img"
-                                alt="تمر برجي">
+                            <img src="{{ asset($product->images()->first() ? asset($product->images()->first()->image_url) : asset('assets/images/img1.png')) }}"
+                                class="card-img-top product-img" alt="تمر برجي">
                             <div class="card-body position-absolute bottom-0 start-50 translate-middle py-1 px-2 w-100">
                                 <h5 class="card-title ">{{ $product->name }}</h5>
                             </div>
