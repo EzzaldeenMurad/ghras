@@ -25,7 +25,7 @@ class CertificateController extends Controller
 
         // Check if user is a consultant
         if ($user->role !== 'consultant') {
-            return redirect()->back()->with('certificate_error', 'فقط المستشارين يمكنهم إضافة شهادات');
+            return redirect()->back()->with('error', 'فقط المستشارين يمكنهم إضافة شهادات');
         }
         // Handle file upload
         if ($request->hasFile('certificate_image')) {
@@ -40,10 +40,10 @@ class CertificateController extends Controller
                 'title' => $request->title,
             ]);
 
-            return redirect()->back()->with('certificate_success', 'تم إضافة الشهادة بنجاح');
+            return redirect()->back()->with('success', 'تم إضافة الشهادة بنجاح');
         }
 
-        return redirect()->back()->with('certificate_error', 'حدث خطأ أثناء رفع الشهادة');
+        return redirect()->back()->with('error', 'حدث خطأ أثناء رفع الشهادة');
     }
 
     /**
@@ -56,7 +56,7 @@ class CertificateController extends Controller
     {
         // Check if the certificate belongs to the authenticated user
         if ($certificate->consultant_id !== auth()->id()) {
-            return redirect()->back()->with('certificate_error', 'غير مصرح لك بحذف هذه الشهادة');
+            return redirect()->back()->with('error', 'غير مصرح لك بحذف هذه الشهادة');
         }
 
         // Delete the file from storage
@@ -68,6 +68,6 @@ class CertificateController extends Controller
         // Delete the record
         $certificate->delete();
 
-        return redirect()->back()->with('certificate_success', 'تم حذف الشهادة بنجاح');
+        return redirect()->back()->with('success', 'تم حذف الشهادة بنجاح');
     }
 }

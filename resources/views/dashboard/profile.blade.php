@@ -222,18 +222,6 @@
                 <div class="certificates-section">
                     <h3 class="section-title">الشهادات والمؤهلات</h3>
 
-                    @if (session('certificate_success'))
-                        <div class="alert alert-success">
-                            {{ session('certificate_success') }}
-                        </div>
-                    @endif
-
-                    @if (session('certificate_error'))
-                        <div class="alert alert-danger">
-                            {{ session('certificate_error') }}
-                        </div>
-                    @endif
-
                     <div class="certificates-gallery">
                         @forelse($user->certificates as $certificate)
                             <div class="certificate-item">
