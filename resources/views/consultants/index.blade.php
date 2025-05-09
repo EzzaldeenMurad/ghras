@@ -18,7 +18,7 @@
                     @forelse ($consultants as $consultant)
                         <div class="col">
                             <div class="product-card">
-                                <img src=" {{ $consultant->image ?asset($consultant->image) : asset('assets/images/avatar_user.jpg') }}"
+                                <img src=" {{ $consultant->image ? asset($consultant->image) : asset('assets/images/avatar_user.jpg') }}"
                                     class="product-img" alt="مستشار" title="مستشار">
                                 <div class="text-center p-3">
                                     <h5 class="product-title">{{ $consultant->name }}</h5>

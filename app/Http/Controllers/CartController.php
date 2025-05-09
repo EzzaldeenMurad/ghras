@@ -69,13 +69,19 @@ class CartController extends Controller
         ]);
         
         Cart::instance()->update($request->rowId, $request->quantity);
-        
+
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث الكمية',
-            'subtotal' => Cart::instance()->subtotal(),
-            'total' => Cart::instance()->total()
+            'itemSubtotal' => Cart::get($request->rowId)->price * $request->quantity, // Optional (if you want to update individual rows)
+            'subtotal' => Cart::subtotal(), // Cart total before taxes
+            'total' => Cart::total(), // Final total (after taxes/discounts)
         ]);
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => 'تم تحديث الكمية',
+        //     'subtotal' => Cart::instance()->subtotal(),
+        //     'total' => Cart::instance()->total()
+        // ]);
     }
 
     /**

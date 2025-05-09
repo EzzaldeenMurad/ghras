@@ -96,44 +96,46 @@
         </div>
     </div>
 @endsection
-
 @section('scripts')
     <script>
         $(document).ready(function() {
-            // Update quantity when plus button is clicked
+            // Helper: Extract numbers from a string (handles "1,000.50 ريال" → 1000.50)
+            function parsePrice(priceString) {
+                return parseFloat(priceString.replace(/[^0-9.-]/g, ''));
+            }
+
+            // Update quantity with plus button
             $('.quantity-btn.plus').on('click', function() {
                 const rowId = $(this).data('id');
                 const input = $(this).siblings('.quantity-input');
-                const currentValue = parseInt(input.val());
-                input.val(currentValue + 1);
-                updateCartItem(rowId, currentValue + 1);
+                const newQty = parseInt(input.val()) + 1;
+                input.val(newQty);
+                updateCartItem(rowId, newQty);
             });
 
-            // Update quantity when minus button is clicked
+            // Update quantity with minus button (minimum 1)
             $('.quantity-btn.minus').on('click', function() {
                 const rowId = $(this).data('id');
                 const input = $(this).siblings('.quantity-input');
-                const currentValue = parseInt(input.val());
-                if (currentValue > 1) {
-                    input.val(currentValue - 1);
-                    updateCartItem(rowId, currentValue - 1);
-                }
+                const newQty = Math.max(1, parseInt(input.val()) - 1);
+                input.val(newQty);
+                updateCartItem(rowId, newQty);
             });
 
-            // Update quantity when input value changes
+            // Handle direct input change
             $('.quantity-input').on('change', function() {
                 const rowId = $(this).data('id');
-                const quantity = parseInt($(this).val());
-                if (quantity >= 1) {
-                    updateCartItem(rowId, quantity);
-                } else {
-                    $(this).val(1);
-                    updateCartItem(rowId, 1);
-                }
+                let qty = parseInt($(this).val()) || 1;
+                qty = Math.max(1, qty);
+                $(this).val(qty);
+                updateCartItem(rowId, qty);
             });
 
-            // Function to update cart item
+            // AJAX: Update cart item
             function updateCartItem(rowId, quantity) {
+                const $row = $(`tr[data-id="${rowId}"]`);
+                $row.addClass('updating');
+
                 $.ajax({
                     url: '{{ route('cart.update') }}',
                     method: 'POST',
@@ -144,19 +146,20 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            // Update item subtotal
-                            const row = $(`tr[data-id="${rowId}"]`);
-                            const price = parseFloat(row.find('td:nth-child(5)').text());
-                            const newSubtotal = (price * quantity).toFixed(2);
-                            row.find('.item-subtotal').text(newSubtotal + ' ريال');
+                            // Update item subtotal (use backend-calculated value)
+                            $row.find('.item-subtotal').text(response.itemSubtotal + ' ريال');
 
-                            // Update cart totals
+                            // Update cart totals (from backend)
                             $('#cart-subtotal').text(response.subtotal + ' ريال');
                             $('#cart-total').text(response.total + ' ريال');
                         }
                     },
-                    error: function(error) {
-                        console.error('Error updating cart:', error);
+                    error: function(xhr) {
+                        alert('Error: Could not update quantity.');
+                        console.error("AJAX Error:", xhr.responseText);
+                    },
+                    complete: function() {
+                        $row.removeClass('updating');
                     }
                 });
             }
