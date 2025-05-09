@@ -44,7 +44,7 @@
                                         <td><span class="pending"> {{ $order->consultation->price }} </span></td>
                                         <td>
                                             <span
-                                                class="text-{{ $order->getStatusColorAttribute() }}">{{ $order->getStatusNameAttribute() }}</span>
+                                                class="badge bg-{{ $order->getStatusColorAttribute() }}">{{ $order->getStatusNameAttribute() }}</span>
                                         </td>
                                         <td>
                                             @if ($order->status == 'pending')

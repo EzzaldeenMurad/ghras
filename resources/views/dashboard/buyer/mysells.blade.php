@@ -35,7 +35,7 @@
             object-fit: cover;
             border-radius: 5px;
         }
-        
+
         .status-badge {
             padding: 5px 10px;
             border-radius: 4px;
@@ -68,6 +68,7 @@
             background-color: #007bff;
             color: white;
         }
+
         /* paid */
         .status-paid {
             background-color: #d2691e;
@@ -107,8 +108,7 @@
                                         <td>{{ $order->created_at->format('d M Y') }}</td>
                                         <td>{{ $order->total }} ريال</td>
                                         <td>
-                                            <span
-                                                class="status-badge status-{{ $order->status }}">
+                                            <span class="status-badge status-{{ $order->status }}">
                                                 @switch($order->status)
                                                     @case('pending')
                                                         قيد الانتظار
@@ -180,7 +180,32 @@
                                     <h6>معلومات الطلب</h6>
                                     <p><strong>رقم الطلب:</strong> #{{ $order->id }}</p>
                                     <p><strong>تاريخ الطلب:</strong> {{ $order->created_at->format('Y-m-d') }}</p>
-                                    <p><strong>حالة الطلب:</strong> {{ $order->status }}</p>
+                                    <p><strong>حالة الطلب:</strong> @switch($order->status)
+                                            @case('pending')
+                                                قيد الانتظار
+                                            @break
+
+                                            @case('processing')
+                                                قيد المعالجة
+                                            @break
+
+                                            @case('paid')
+                                                تم الدفع
+                                            @break
+
+                                            @case('shipped')
+                                                تم الشحن
+                                            @break
+
+                                            @case('delivered')
+                                                تم التوصيل
+                                            @break
+
+                                            @case('cancelled')
+                                                تم الغاء
+                                            @break
+                                        @endswitch
+                                    </p>
                                     <p><strong>طريقة الدفع:</strong> بطاقة ائتمان</p>
                                     <p><strong>المجموع:</strong> {{ $order->total }} ريال</p>
                                 </div>

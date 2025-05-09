@@ -49,13 +49,13 @@ class ConsultantOrder extends Model
     {
         switch ($this->status) {
             case 'pending':
-                return 'warning';
+                return 'pending';
             case 'accepted':
                 return 'secondary';
             case 'cancelled':
                 return 'danger';
             default:
-                return 'info';
+                return 'paid';
         }
     }
 }

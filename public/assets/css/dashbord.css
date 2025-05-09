@@ -182,6 +182,7 @@ input {
     margin-top: 0.25rem;
 }
 
+
 select.form-select {
     width: 70% !important;
     background-color: transparent !important;
@@ -204,4 +205,22 @@ select.form-select {
 
 .ck-editor__editable:focus {
     border-color: var(--border-color) !important;
+}
+
+/* status styles */
+.badge {
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.bg-paid {
+    background-color: #d2691e;
+    color: white;
+}
+
+.bg-pending {
+    background-color: #ffc107;
+    /* color: #212529; */
 }

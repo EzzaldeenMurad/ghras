@@ -4,105 +4,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/css/dashbord.css') }}">
-    {{-- <style>
-        .consultant-profile {
-            display: flex;
-            align-items: center;
-        }
 
-        .consultant-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-left: 10px;
-        }
-
-        .consultant-name {
-            font-weight: 600;
-        }
-
-        .pending {
-            color: #f39c12;
-            font-weight: bold;
-        }
-
-        .paid {
-            color: #27ae60;
-            font-weight: bold;
-        }
-
-        .cancelled {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-
-        .completed {
-            color: #2980b9;
-            font-weight: bold;
-        }
-
-        .action-icon {
-            cursor: pointer;
-            transition: transform 0.2s;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .action-icon:hover {
-            transform: scale(1.1);
-            background-color: rgba(0,0,0,0.05);
-        }
-
-        .chat-icon {
-            color: #3498db;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #7f8c8d;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #bdc3c7;
-        }
-
-        .consultation-subject {
-            font-weight: 500;
-            color: #2c3e50;
-        }
-
-        .consultation-details {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-
-        .add-consultation-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            transition: background-color 0.3s;
-        }
-
-        .add-consultation-btn:hover {
-            background-color: #2ecc71;
-            color: white;
-        }
-    </style> --}}
 @endsection
 
 @section('content')
@@ -147,7 +49,7 @@
                                         </td>
                                         <td>
                                             <span
-                                                class="badge text-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
+                                                class="badge bg-{{ $consultation->getStatusColorAttribute() }} ">{{ $consultation->getStatusNameAttribute() }}</span>
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2 justify-content-center">
