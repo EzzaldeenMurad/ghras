@@ -55,7 +55,7 @@
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 @if ($product->images()->first())
-                                                    <img src="{{ $product->images()? asset($product->images()->first()->image_url): asset('assets/images/img1.png') }}"
+                                                    <img src="{{ $product->images() ? asset($product->images()->first()->image_url) : asset('assets/images/img1.png') }}"
                                                         alt="{{ $product->name }}" class="product-img">
                                                 @else
                                                     <div

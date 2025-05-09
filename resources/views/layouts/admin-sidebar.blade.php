@@ -38,7 +38,7 @@
 @php
     $menuItems = [
         ['title' => 'لوحة التحكم', 'route' => 'admin.dashboard'],
-        ['title' => 'المنتجات', 'route' => 'admin.products.index'],
+        ['title' => 'المنتجات', 'route' => 'admin.products'],
         ['title' => 'الفئات', 'route' => 'categories.index'],
         ['title' => 'الطلبات', 'route' => 'admin.orders'],
         ['title' => 'المقالات', 'route' => 'admin.articles'],
@@ -53,7 +53,7 @@
                 <ul class="nav flex-lg-column gap-2 justify-content-center px-0">
                     @foreach ($menuItems as $item)
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs($item['route']) ? 'active' : '' }}"
+                            <a class="nav-link {{ request()->routeIs($item['route'] . '*') ? 'active' : '' }}"
                                 href="{{ route($item['route']) }}">
                                 {{ $item['title'] }}
                             </a>

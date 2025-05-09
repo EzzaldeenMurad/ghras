@@ -12,7 +12,7 @@ class ChatController extends Controller
 {
     public function index(Request $request)
     {
-        $consultantId = $request->query('consultant_id');
+        $consultantId = $request->input('consultant_id');
         $currentUserId = Auth::id();
 
         // جلب المستشارين الذين تمت مراسلتهم من قبل المستخدم الحالي

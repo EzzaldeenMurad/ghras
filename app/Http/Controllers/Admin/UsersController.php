@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -18,6 +19,10 @@ class UsersController extends Controller
      */
     public function index()
     {
+        $admin =  Auth::user();
+        if ($admin->role != 'admin') {
+            return redirect()->route('home')->with('error', 'غير مصرح لك بالوصول لهذه الصفحة');
+        }
         $users = User::latest()->get();
         return view('admin.users', compact('users'));
     }

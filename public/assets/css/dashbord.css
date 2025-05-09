@@ -61,7 +61,147 @@
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
 ul {
     list-style: none;
     padding: 0;
+}
+
+
+.upload-box {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+    width: 250px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: #FFFFFF66;
+}
+
+.upload-box:hover {
+    border-color: #b87333;
+}
+
+.form-control::placeholder {
+    color: #b8a99a;
+}
+
+input {
+    width: 70% !important;
+}
+
+.btn-primary-custom {
+    background-color: #d2691e;
+    color: white;
+    padding: 0.5rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: none;
+}
+
+.btn-primary-custom:hover {
+    background-color: #b87333;
+    color: white;
+}
+
+.btn-secondary-custom {
+    background-color: #606052;
+    color: white;
+    padding: 0.5rem 3rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: none;
+}
+
+.btn-secondary-custom:hover {
+    background-color: #4d4d40;
+    color: white;
+}
+
+.form-control {
+    background-color: transparent !important;
+    border: 1px solid var(--border-color);
+}
+
+.new-product-page {
+    width: 70%;
+}
+
+/* Dropzone custom styling */
+.dropzone {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    background: #FFFFFF66;
+    min-height: 250px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dropzone:hover {
+    border-color: #b87333;
+}
+
+.dropzone .dz-message {
+    text-align: center;
+}
+
+.dropzone .dz-preview {
+    margin: 10px;
+}
+
+.dropzone .dz-preview .dz-image {
+    border-radius: 8px;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+    position: relative;
+    display: block;
+    z-index: 10;
+}
+
+.btn-delete-image {
+    height: 22px;
+    width: 40px;
+    font-size: 12px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+select.form-select {
+    width: 70% !important;
+    background-color: transparent !important;
+    border: 1px solid var(--border-color);
+}
+
+.ck-editor__editable {
+    min-height: 200px;
+    background-color: transparent !important;
+    color: #333;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+.ck-toolbar_grouping {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: transparent !important;
+}
+
+.ck-editor__editable:focus {
+    border-color: var(--border-color) !important;
 }
