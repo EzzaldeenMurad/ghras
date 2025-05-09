@@ -34,7 +34,7 @@
                                     <div class="chat-contact d-flex align-items-center" data-user-id="{{ $user->id }}"
                                         data-specialization="{{ $user->specialization }}"
                                         data-user-name="{{ $user->name }}">
-                                        <img src="{{ $user->image ? asset($user->image) : asset('images/default.jpeg') }}"
+                                        <img src="{{ $user->image ? asset($user->image) : asset('assets/images/avatar_user.jpg') }}"
                                             alt="{{ $user->name }}" class="contact-avatar">
                                         <div class="contact-info ms-3">
                                             <div class="d-flex justify-content-between align-items-center">
@@ -75,25 +75,23 @@
                                             <h5 id="chatHeaderSpecialization"></h5>
                                         </div>
                                     </div>
-                                    <!-- Student Name Above Messages -->
-                                    {{-- <div id="currentStudentName" class="text-center my-3"
-                                        style="font-weight: bold; font-size: 1.2rem;"></div> --}}
 
                                     <!-- Chat Messages -->
                                     <div class="chat-messages" id="chatMessages">
                                         <!-- Messages will be loaded here -->
                                     </div>
+                                    <div class="chat-input mt-2">
+                                        <form id="chatForm" class="chat-input-form">
+                                            <input type="text" id="messageInput" class="chat-input-field"
+                                                placeholder="اكتب رسالتك ..." autocomplete="off">
+                                            <button type="submit" class="chat-send-btn">
+                                                إرسال
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                                 <!-- Chat Input -->
-                                <div class="chat-input">
-                                    <form id="chatForm" class="chat-input-form">
-                                        <input type="text" id="messageInput" class="chat-input-field"
-                                            placeholder="اكتب رسالتك ..." autocomplete="off">
-                                        <button type="submit" class="chat-send-btn">
-                                           إرسال
-                                        </button>
-                                    </form>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -227,6 +225,7 @@
                                 <i class="fas fa-comment-slash fa-2x mb-3"></i>
                                 <p>لا توجد رسائل بعد</p>
                             </div>`;
+                            notFound.remove();
                         }
                     })
                     .catch(error => {
