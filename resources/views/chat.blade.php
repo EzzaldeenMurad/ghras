@@ -220,12 +220,14 @@
                                 notFound.remove();
                             }
                         } else {
+                            const oldNotFound = chatMessages.querySelector('.not-found');
+                            if (oldNotFound) oldNotFound.remove();
                             chatMessages.innerHTML = `
                             <div class="not-found text-center py-5 text-muted">
                                 <i class="fas fa-comment-slash fa-2x mb-3"></i>
                                 <p>لا توجد رسائل بعد</p>
                             </div>`;
-                            notFound.remove();
+
                         }
                     })
                     .catch(error => {
@@ -374,6 +376,11 @@
                             messageInput.value = '';
                             appendMessage(data.message, authUserId);
                             scrollToBottom();
+
+                            const notFound = chatMessages.querySelector('.not-found');
+                            if (notFound) {
+                                notFound.remove();
+                            }
                         } else {
                             throw new Error(data.error || 'Unknown error');
                         }
