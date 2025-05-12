@@ -14,7 +14,7 @@
             background: transparent;
         }
 
-        .swiper-container{
+        .swiper-container {
             scrollbar-width: none;
             /* Firefox */
             -ms-overflow-style: none;
@@ -35,8 +35,8 @@
 
         .star-container {
             /* background-color: var(--secondary-color);
-                                    color: var(--main-color);
-                                    border-radius: var(--main-radius); */
+                                        color: var(--main-color);
+                                        border-radius: var(--main-radius); */
             width: 50%;
         }
     </style>
@@ -96,7 +96,7 @@
                                         <div class="d-flex align-items-center">
                                             <div
                                                 style="width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; overflow: hidden; margin-left: 10px;">
-                                                <img src="{{ asset($review->user->image) ?? asset('assets/images/consultant.png') }}"
+                                                <img src="{{ $review->user->image ? asset($review->user->image) : asset('assets/images/avatar_user.jpg') }}"
                                                     alt="صورة شخصية"
                                                     class="bi bi-person-fill d-flex justify-content-center align-items-center h-100"
                                                     style="font-size: 1.5rem;"></img>
